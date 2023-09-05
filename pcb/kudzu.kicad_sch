@@ -1,0 +1,70 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid 30e30bdf-50e5-46a8-92c7-0e280cceabe8)
+
+  (paper "B")
+
+  (title_block
+    (title "Kudzu")
+    (rev "WIP5")
+  )
+
+  (lib_symbols
+  )
+
+
+  (sheet (at 163.83 35.56) (size 54.61 48.26) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 162828de-0fc8-48f2-95ca-16f35e12e8ad)
+    (property "Sheetname" "ux" (at 163.83 34.8484 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "ux.kicad_sch" (at 163.83 84.4046 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "kudzu"
+        (path "/30e30bdf-50e5-46a8-92c7-0e280cceabe8" (page "4"))
+      )
+    )
+  )
+
+  (sheet (at 29.21 33.02) (size 113.03 85.09) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 25d24ea5-31a5-40ab-afee-5209d35e3063)
+    (property "Sheetname" "RP2040 and Debug" (at 29.21 32.3084 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "rp2040.kicad_sch" (at 29.21 118.6946 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "kudzu"
+        (path "/30e30bdf-50e5-46a8-92c7-0e280cceabe8" (page "2"))
+      )
+    )
+  )
+
+  (sheet (at 308.61 72.39) (size 44.45 50.8) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 947fe22b-a740-4b36-aa9b-7334b6ab9f8c)
+    (property "Sheetname" "power" (at 308.61 71.6784 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "power.kicad_sch" (at 308.61 123.7746 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "kudzu"
+        (path "/30e30bdf-50e5-46a8-92c7-0e280cceabe8" (page "3"))
+      )
+    )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

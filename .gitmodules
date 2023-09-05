@@ -1,0 +1,6 @@
+[submodule "third_party/pcb/esp-rust-board"]
+	path = third_party/pcb/esp-rust-board
+	url = https://github.com/esp-rs/esp-rust-board
+[submodule "third_party/pcb/gekkio-kicad-libs"]
+	path = third_party/pcb/gekkio-kicad-libs
+	url = https://github.com/Gekkio/gekkio-kicad-libs
