@@ -31,6 +31,10 @@
     (stroke (width 0.2) (type default)) (fill none) (layer "F.SilkS") (tstamp 84dcdde7-c997-4459-a21f-a9de6813e1fc))
   (fp_circle (center 8 -0.000001) (end 7.999999 -0.000001)
     (stroke (width 0.4) (type default)) (fill none) (layer "F.SilkS") (tstamp 965bb9b1-f044-4ab7-bf54-2f9d4a086643))
+  (fp_circle (center -10.25 -10.25) (end -9.2 -10.25)
+    (stroke (width 0.2) (type solid)) (fill solid) (layer "Edge.Cuts") (tstamp 596fb418-2968-4a8d-8f5a-78a3eb3fb858))
+  (fp_circle (center 0 14.5) (end 1.05 14.5)
+    (stroke (width 0.2) (type solid)) (fill solid) (layer "Edge.Cuts") (tstamp 13b0972d-dbad-4ae8-98dd-8cdf24de2d30))
   (pad "1" smd custom (at -2.300001 -7.7 270) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
@@ -147,7 +151,7 @@
         (width 0) (fill yes))
       (gr_line (start 0.282086 -0.228342) (end 0 2.1) (width 0.2))
       (gr_line (start -2.867346 1.889225) (end 0 2.1) (width 0.2))
-      (gr_arc (start -2.867346 1.889225) (mid -1.987007 0.321615) (end -0.3 -0.299998) (width 0.2))
+      (gr_arc (start -2.867346 1.889225) (mid -1.987007 0.321616) (end -0.3 -0.299997) (width 0.2))
       (gr_arc (start -0.3 -0.3) (mid -0.00676 -0.282018) (end 0.282086 -0.228342) (width 0.2))
       (gr_poly
         (pts
@@ -276,7 +280,7 @@
         (width 0) (fill yes))
       (gr_line (start 0.282086 -0.228342) (end 0 2.1) (width 0.2))
       (gr_line (start -2.867346 1.889225) (end 0 2.1) (width 0.2))
-      (gr_arc (start -2.867346 1.889225) (mid -1.987007 0.321615) (end -0.3 -0.299998) (width 0.2))
+      (gr_arc (start -2.867346 1.889225) (mid -1.987007 0.321616) (end -0.3 -0.299997) (width 0.2))
       (gr_arc (start -0.3 -0.3) (mid -0.00676 -0.282018) (end 0.282086 -0.228342) (width 0.2))
       (gr_poly
         (pts
