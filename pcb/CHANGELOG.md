@@ -1,0 +1,32 @@
+# Kudzu PCB Changelog
+
+## WIP7
+
+## Changes
+
+- Pruned unused parts from `kudzu-parts.kicad_sym`.
+- Updated all parts in `kudzu-parts.kicad_sym` to pass `klc-check/check_symbol.py`.
+- Switched to `PI4IOE5V6416` IO expander which has programmable pull-up.
+- Removed pull-ups on `BOARD_ID*`, `BUTTON_*`, `TOUCH_RESET`, and `DISP_RESET`
+  in favor of internal pull-ups in the IO expander.
+- Added pull-up to `RESET_N`.
+- Removed test points from `QSPI_*`.
+- Switched to QFN version of `MCP73831`.
+- Fixed missing pin number on `MAX17048` `QSTRT`.
+- Removed pull-up on 3.3V regulator's `EN` pin and tied directly to `VIN`.
+- Added extra decoupling caps to rp2040's 3.3V and 1.1V lines per design guide.
+- Added note to add axis diagram to silk screen on board.
+- Miscellaneous visual cleanup.
+- Added FET on conduction path for system power.
+- Added circuit to charge at 250mA when system is on and 500mA when system is off.
+- Assigned all RP2040 IOs.
+- Created and switched to dedicated symbols for DPAD, A/B, and SELECT/START.
+- Switched display connector symbol for one with a mounting pin.
+- Set test point values to net names.
+- Selected LEDs and current limiting resistor values.
+- Added closed solder jumpers to GBA Link signals.
+- Changed solder jumper on GBA VCC pin to open.
+- Changed LCD decoupling to mach reference circuit.
+- Connected DISP_RD (J9 Pin 12) to +3V3.
+- Connected DB0-15 (J9 Pins 17-32) to GND.
+- Updated 12MHz Crystal (Y1) to correct symbol and foot print.
