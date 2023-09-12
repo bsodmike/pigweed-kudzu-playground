@@ -4,3 +4,12 @@
 [submodule "third_party/pcb/gekkio-kicad-libs"]
 	path = third_party/pcb/gekkio-kicad-libs
 	url = https://github.com/Gekkio/gekkio-kicad-libs
+[submodule "third_party/pigweed-experimental"]
+	path = third_party/pigweed-experimental
+	url = https://pigweed.googlesource.com/pigweed/experimental
+[submodule "third_party/pigweed"]
+	path = third_party/pigweed
+	url = https://pigweed.googlesource.com/pigweed/pigweed
+[submodule "third_party/freertos"]
+	path = third_party/freertos
+	url = https://pigweed.googlesource.com/third_party/github/FreeRTOS/FreeRTOS-Kernel.git

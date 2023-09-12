@@ -1,0 +1,67 @@
+{
+  "pw": {
+    "pw_cli": {
+      "plugins": {
+        "build": {
+          "module": "kudzu_tools.build_project",
+          "function": "build_project"
+        },
+        "watch": {
+          "module": "kudzu_tools.build_project",
+          "function": "watch_project"
+        },
+        "presubmit": {
+          "module": "pigweed_experimental_tools.presubmit_checks",
+          "function": "main"
+        },
+        "heap-viewer": {
+          "module": "pw_allocator.heap_viewer",
+          "function": "main"
+        },
+        "ide": {
+          "module": "pw_ide.__main__",
+          "function": "main"
+        },
+        "console": {
+          "module": "pw_system.console",
+          "function": "main"
+        },
+        "package": {
+          "module": "pigweed_experimental_tools.experimental_packages",
+          "function": "main"
+        }
+      }
+    },
+    "pw_env_setup": {
+      "root_variable": "KUDZU_ROOT",
+      "rosetta": "allow",
+      "cipd_package_files": [
+        "third_party/pigweed/pw_env_setup/py/pw_env_setup/cipd_setup/default.json"
+      ],
+      "virtualenv": {
+        "gn_root": ".",
+        "gn_targets": [
+          ":python.install"
+        ]
+      },
+      "gni_file": "build_overrides/pigweed_environment.gni",
+      "optional_submodules": [
+        "third_party/freertos/Source",
+        "third_party/pigweed-experimental/infra/config",
+        "third_party/pigweed-experimental/third_party/boringssl/src",
+        "third_party/pigweed-experimental/third_party/freertos/Source",
+        "third_party/pigweed-experimental/third_party/mbedtls/src",
+        "third_party/pigweed-experimental/third_party/nanopb",
+        "third_party/pigweed-experimental/third_party/picotls/src",
+        "third_party/pigweed-experimental/third_party/pigweed"
+      ],
+      "pw_packages": [
+        "glfw",
+        "imgui",
+        "pico_sdk",
+        "picotool"
+      ]
+    }
+  }
+}
+
