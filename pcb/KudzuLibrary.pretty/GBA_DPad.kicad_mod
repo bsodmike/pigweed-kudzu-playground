@@ -1,5 +1,6 @@
 (footprint "GBA_DPad" (version 20221018) (generator pcbnew)
   (layer "F.Cu")
+  (clearance 0.2)
   (attr smd)
   (fp_text reference ">NAME" (at 0 -4.064) (layer "F.SilkS") hide
       (effects (font (size 0.4064 0.4064) (thickness 0.0254)))

@@ -1,5 +1,6 @@
 (footprint "GBA_AB" (version 20221018) (generator pcbnew)
   (layer "F.Cu")
+  (clearance 0.2)
   (attr smd)
   (fp_text reference ">NAME" (at 6 -3) (layer "F.SilkS") hide
       (effects (font (size 0.4064 0.4064) (thickness 0.0254)))
@@ -9,19 +10,15 @@
       (effects (font (size 0.4064 0.4064) (thickness 0.0254)))
     (tstamp 85c40cec-698f-433d-94dd-42da8d36880a)
   )
-  (fp_circle (center 0 0) (end 0.000001 0)
-    (stroke (width 0.4) (type default)) (fill none) (layer "F.SilkS") (tstamp 3315ddbe-14fa-4f8c-810d-b1b5e9bbc2e9))
   (fp_circle (center 0 0) (end 3 0)
     (stroke (width 0.2) (type default)) (fill none) (layer "F.SilkS") (tstamp 89f57d73-c027-4c05-86e0-da935eacfd46))
-  (fp_circle (center 13.13 -4.48) (end 13.130001 -4.48)
-    (stroke (width 0.4) (type default)) (fill none) (layer "F.SilkS") (tstamp aa644a7a-87f3-4fc0-82d4-2290e8a10fc1))
-  (fp_circle (center 13.13 -4.48) (end 16.13 -4.48)
-    (stroke (width 0.2) (type default)) (fill none) (layer "F.SilkS") (tstamp 91b121d8-3e2b-48c7-bf6d-2d45e18fbda2))
+  (fp_circle (center 13.13 -4.43) (end 16.13 -4.43)
+    (stroke (width 0.2) (type default)) (fill none) (layer "F.SilkS") (tstamp c8f70f76-7693-49b7-81d2-dfff9e125913))
   (fp_circle (center 2.97 -8.48) (end 4.02 -8.48)
     (stroke (width 0.2) (type solid)) (fill solid) (layer "Edge.Cuts") (tstamp a1bd5e6c-7494-4cdd-b0a4-66a6b3f3b3cf))
   (fp_circle (center 8.23 2.25) (end 9.28 2.25)
     (stroke (width 0.2) (type solid)) (fill solid) (layer "Edge.Cuts") (tstamp 9591904d-5b63-4bdd-af07-ec6096cb386a))
-  (pad "1" smd custom (at -2.2 -0.1) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+  (pad "1" smd custom (at -2.33 -0.1) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -65,7 +62,7 @@
         )
         (width 0.1) (fill yes))
     ) (tstamp bc0a4d48-ce34-42f1-a37c-6c355fb6b180))
-  (pad "1" smd custom (at 0.65 -0.4) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+  (pad "1" smd custom (at 0.65 -0.14) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -110,7 +107,7 @@
         )
         (width 0.1) (fill yes))
     ) (tstamp db0263c7-629e-4958-a44c-3c99b50b274d))
-  (pad "2" smd custom (at 10.93 -4.58) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+  (pad "2" smd custom (at 10.8 -4.53) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -153,8 +150,8 @@
           (xy -0.4 -2.1)
         )
         (width 0.1) (fill yes))
-    ) (tstamp 305c36da-6208-4219-84b9-634ebb21fc3c))
-  (pad "2" smd custom (at 13.78 -4.88) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+    ) (tstamp ee4a7524-dafb-4da0-8590-e16dfd8ff89b))
+  (pad "2" smd custom (at 13.78 -4.57) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -198,8 +195,8 @@
           (xy -0.45 2.1)
         )
         (width 0.1) (fill yes))
-    ) (tstamp 26999333-9e83-4fe1-9be4-6d037c83b2c3))
-  (pad "3" smd custom (at -0.7 0) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+    ) (tstamp b0c4250d-a91e-4b6a-a828-b1e183b7a447))
+  (pad "3" smd custom (at -0.7 -0.36) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -244,7 +241,7 @@
         )
         (width 0.1) (fill yes))
     ) (tstamp 298a4068-9b53-4eac-ad55-7c6b6da8a7b6))
-  (pad "3" smd custom (at 2.15 0) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+  (pad "3" smd custom (at 2.27 0) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -288,7 +285,7 @@
         )
         (width 0.1) (fill yes))
     ) (tstamp ccd996d6-bcb9-4bf0-ba81-ca5ce9fb72f7))
-  (pad "3" smd custom (at 12.43 -4.48) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+  (pad "3" smd custom (at 12.43 -4.79) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -332,8 +329,8 @@
           (xy 0.5 -1.6)
         )
         (width 0.1) (fill yes))
-    ) (tstamp e444612f-0190-46e8-9e24-1797ace4868d))
-  (pad "3" smd custom (at 15.28 -4.48) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
+    ) (tstamp abbdbbc4-631a-4cb0-8ff9-8cf61b18c876))
+  (pad "3" smd custom (at 15.4 -4.43) (size 0.6 0.6) (layers "F.Cu" "F.Paste" "F.Mask")
     (thermal_bridge_angle 45)
     (options (clearance outline) (anchor circle))
     (primitives
@@ -376,25 +373,23 @@
           (xy 0.45 2.3)
         )
         (width 0.1) (fill yes))
-    ) (tstamp dcc07b24-d732-4201-bbb7-419f41eff311))
-  (group "" (id 9435e3e2-40e2-4dbd-8f20-bb705b4e0088)
+    ) (tstamp 27a88d6d-ea33-458a-9daf-34ceabd26f6f))
+  (group "" (id 33ddab35-f286-4ea3-85d9-3f12d3437a99)
+    (members
+      27a88d6d-ea33-458a-9daf-34ceabd26f6f
+      abbdbbc4-631a-4cb0-8ff9-8cf61b18c876
+      b0c4250d-a91e-4b6a-a828-b1e183b7a447
+      c8f70f76-7693-49b7-81d2-dfff9e125913
+      ee4a7524-dafb-4da0-8590-e16dfd8ff89b
+    )
+  )
+  (group "" (id b906eff0-cb8b-4608-8e31-e679e356636a)
     (members
       298a4068-9b53-4eac-ad55-7c6b6da8a7b6
-      3315ddbe-14fa-4f8c-810d-b1b5e9bbc2e9
       89f57d73-c027-4c05-86e0-da935eacfd46
       bc0a4d48-ce34-42f1-a37c-6c355fb6b180
       ccd996d6-bcb9-4bf0-ba81-ca5ce9fb72f7
       db0263c7-629e-4958-a44c-3c99b50b274d
-    )
-  )
-  (group "" (id ec621f76-8078-476d-a529-4712b117b19b)
-    (members
-      26999333-9e83-4fe1-9be4-6d037c83b2c3
-      305c36da-6208-4219-84b9-634ebb21fc3c
-      91b121d8-3e2b-48c7-bf6d-2d45e18fbda2
-      aa644a7a-87f3-4fc0-82d4-2290e8a10fc1
-      dcc07b24-d732-4201-bbb7-419f41eff311
-      e444612f-0190-46e8-9e24-1797ace4868d
     )
   )
 )
