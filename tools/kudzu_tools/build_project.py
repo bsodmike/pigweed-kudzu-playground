@@ -22,8 +22,8 @@ from pw_build.build_recipe import (
     BuildRecipe,
 )
 from pw_build.project_builder_presubmit_runner import (
-    should_gn_gen,
     main,
+    should_gn_gen_with_args,
 )
 from pw_presubmit.build import gn_args
 
@@ -54,14 +54,15 @@ def build_project(force_pw_watch: bool = False) -> int:
         '{build_dir}',
         '--export-compile-commands',
     ]
-    default_gn_gen_command.append(
-        gn_args(
-            PICO_SRC_DIR="//environment/packages/pico_sdk",
-            dir_pw_third_party_glfw="//environment/packages/glfw",
-            dir_pw_third_party_freertos="//third_party/freertos/Source",
-            dir_pw_third_party_imgui="//environment/packages/imgui",
-        )
+
+    default_gn_args = dict(
+        PICO_SRC_DIR="//environment/packages/pico_sdk",
+        dir_pw_third_party_glfw="//environment/packages/glfw",
+        dir_pw_third_party_freertos="//third_party/freertos",
+        dir_pw_third_party_imgui="//environment/packages/imgui",
     )
+
+    default_gn_gen_command.append(gn_args(**default_gn_args))
 
     build_recipes = [
         BuildRecipe(
@@ -69,7 +70,7 @@ def build_project(force_pw_watch: bool = False) -> int:
             title='default',
             steps=[
                 BuildCommand(
-                    run_if=should_gn_gen,
+                    run_if=should_gn_gen_with_args(default_gn_args),
                     command=default_gn_gen_command,
                 ),
                 BuildCommand(
