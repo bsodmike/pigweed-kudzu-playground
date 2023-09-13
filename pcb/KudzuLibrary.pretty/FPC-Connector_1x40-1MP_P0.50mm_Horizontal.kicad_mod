@@ -123,8 +123,8 @@
   (pad "38" smd rect (at 8.75 -1.85) (size 0.3 1.25) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp c5061bf6-8a7e-41ab-b770-dab82f937873))
   (pad "39" smd rect (at 9.25 -1.85) (size 0.3 1.25) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp ed92c841-64bd-47a2-bb00-85dfa20dd7ad))
   (pad "40" smd rect (at 9.75 -1.85) (size 0.3 1.25) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 6a797655-0cf0-40cd-8a97-ef4f85d8d2df))
-  (pad "MP" smd rect (at -11.29 0.475) (size 2 3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 5d20d59a-aba3-4661-a9af-091a17459b1a))
-  (pad "MP" smd rect (at 11.29 0.475) (size 2 3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 4740c35d-2705-4e9c-a3e6-40444f8a3c9f))
+  (pad "MH" smd rect (at -11.29 0.475) (size 2 3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 5d20d59a-aba3-4661-a9af-091a17459b1a))
+  (pad "MH" smd rect (at 11.29 0.475) (size 2 3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 4740c35d-2705-4e9c-a3e6-40444f8a3c9f))
   (model "${KICAD6_3DMODEL_DIR}/Connector_FFC-FPC.3dshapes/Hirose_FH12-40S-0.5SH_1x40-1MP_P0.50mm_Horizontal.wrl"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
