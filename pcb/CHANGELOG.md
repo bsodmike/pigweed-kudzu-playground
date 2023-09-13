@@ -1,8 +1,22 @@
 # Kudzu PCB Changelog
 
+## 0-rc1
+
+### Changes
+
+- Added 2.2uF and 100nF decoupling to flash chip.
+- Changed both RP2040 and IO expander pinout to aid in routing.
+- Remove `RESET_N` test point
+- Confirmed battery connector pinout.
+- Change pinout of display backlight driver to aid in routing.
+- Select right angle LEDs for indicators.
+- Board routed.
+
+
+
 ## WIP7
 
-## Changes
+### Changes
 
 - Pruned unused parts from `kudzu-parts.kicad_sym`.
 - Updated all parts in `kudzu-parts.kicad_sym` to pass `klc-check/check_symbol.py`.
