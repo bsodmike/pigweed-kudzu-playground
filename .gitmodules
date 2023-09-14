@@ -13,3 +13,6 @@
 [submodule "third_party/freertos"]
 	path = third_party/freertos
 	url = https://pigweed.googlesource.com/third_party/github/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "third_party/pcb/espressif-kicad-libraries"]
+	path = third_party/pcb/espressif-kicad-libraries
+	url = https://github.com/espressif/kicad-libraries

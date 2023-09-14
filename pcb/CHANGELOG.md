@@ -1,5 +1,14 @@
 # Kudzu PCB Changelog
 
+## Rev 0
+
+### Changes
+
+- Some routing cleanup.
+- Move thermal vias under QFN packages to avoid solder wicking.
+- Remove overlapping silk on `CONN HEADER SMD 2POS 1.25MM.kicad_mod `.
+- Fixed swapped DISP_SDO & DISP_SDI.
+
 ## 0-rc2
 
 ### Changes

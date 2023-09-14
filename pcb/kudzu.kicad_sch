@@ -6,8 +6,8 @@
 
   (title_block
     (title "Kudzu")
-    (date "2023-09-12")
-    (rev "0-rc2")
+    (date "2023-09-13")
+    (rev "0")
     (company "Copyright 2023 The Pigweed Authors")
   )
 
@@ -443,6 +443,23 @@
     (instances
       (project "kudzu"
         (path "/30e30bdf-50e5-46a8-92c7-0e280cceabe8" (page "2"))
+      )
+    )
+  )
+
+  (sheet (at 13.97 173.99) (size 25.4 25.4) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 65c0778d-43c9-4131-8c9d-6725be8f315f)
+    (property "Sheetname" "misc" (at 13.97 173.2784 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "misc.kicad_sch" (at 13.97 199.9746 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "kudzu"
+        (path "/30e30bdf-50e5-46a8-92c7-0e280cceabe8" (page "5"))
       )
     )
   )
