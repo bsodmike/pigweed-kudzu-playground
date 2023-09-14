@@ -7,7 +7,7 @@
   (title_block
     (title "Kudzu")
     (date "2023-09-12")
-    (rev "rev0-rc1")
+    (rev "0-rc2")
     (company "Copyright 2023 The Pigweed Authors")
   )
 

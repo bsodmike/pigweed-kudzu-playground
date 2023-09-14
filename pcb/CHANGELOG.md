@@ -1,5 +1,15 @@
 # Kudzu PCB Changelog
 
+## 0-rc2
+
+### Changes
+
+- Length match QSPI flash traces.
+- Impedance control and length match USB traces.
+- Length match GBA Link traces.
+- Keep GBA Link and QSPI traces on top layer (directly above ground plane) as
+  much as possible.
+
 ## 0-rc1
 
 ### Changes
