@@ -57,8 +57,7 @@
       "pw_packages": [
         "glfw",
         "imgui",
-        "pico_sdk",
-        "picotool"
+        "pico_sdk"
       ]
     }
   }
