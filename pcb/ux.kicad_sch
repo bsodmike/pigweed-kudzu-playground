@@ -6,8 +6,8 @@
 
   (title_block
     (title "Kudzu")
-    (date "2023-09-13")
-    (rev "0")
+    (date "2023-09-26")
+    (rev "1")
     (company "Copyright 2023 The Pigweed Authors")
   )
 
@@ -3166,7 +3166,7 @@
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 5c929f24-aa0e-40e4-9e6e-08e6eb65aec3)
   )
-  (label "DISP_LEDK_2" (at 247.65 137.16 180) (fields_autoplaced)
+  (label "DISP_LEDK_2" (at 247.65 142.24 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 6938d7d3-94ed-42e2-8452-53de8ca5320e)
   )
@@ -3190,7 +3190,7 @@
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 7e2cacaa-0838-4846-bab7-db2f2a0d944d)
   )
-  (label "DISP_LEDK_0" (at 247.65 142.24 180) (fields_autoplaced)
+  (label "DISP_LEDK_0" (at 247.65 137.16 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 827fe1fa-b214-487f-ab18-90a4f7f66fca)
   )

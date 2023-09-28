@@ -1,5 +1,18 @@
 # Kudzu PCB Changelog
 
+## Rev 1
+
+### Changes
+
+- Fixed reversed pinout on `FPC-Connector_1x40-1MP_P0.50mm_Horizontal`.
+- Fixed pinout on charge rate FET (`Q3`).
+- Swapped `TX` and `GND` on UART header so that `GND` is on pin 1.
+- Updated board to reflect above changes.
+- Corrected `BOOT` and `RESET` button labels.
+- Increased size of labels.
+- Added fiducials to board.
+- Added DigiKey part numbers to BOM for passives.
+
 ## Rev 0
 
 ### Changes
