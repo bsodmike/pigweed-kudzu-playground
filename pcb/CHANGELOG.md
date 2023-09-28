@@ -4,6 +4,7 @@
 
 ### Changes
 
+- Updated board outline and keepouts to match CAD model.
 - Fixed reversed pinout on `FPC-Connector_1x40-1MP_P0.50mm_Horizontal`.
 - Fixed pinout on charge rate FET (`Q3`).
 - Swapped `TX` and `GND` on UART header so that `GND` is on pin 1.
