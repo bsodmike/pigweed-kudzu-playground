@@ -32,11 +32,17 @@ group("default") {
 }
 
 group("applications") {
-  deps = [ "$dir_pigweed_experimental/applications/terminal_display:all($dir_pigweed_experimental/targets/host:host_debug)" ]
+  deps = [
+    "//applications/32blit_demo:all($dir_pigweed_experimental/targets/host:host_debug)",
+    "//applications/terminal_display:all($dir_pigweed_experimental/targets/host:host_debug)",
+  ]
 
   # Conditionally add so that bootstrap.sh can run.
   if (PICO_SRC_DIR != "") {
-    deps += [ "$dir_pigweed_experimental/applications/terminal_display:all($dir_pigweed_experimental/targets/rp2040)" ]
+    deps += [
+      "//applications/32blit_demo:all($dir_pigweed_experimental/targets/rp2040)",
+      "//applications/terminal_display:all($dir_pigweed_experimental/targets/rp2040)",
+    ]
   }
 }
 

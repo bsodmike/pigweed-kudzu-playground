@@ -19,6 +19,9 @@ default_args = {
   # Sets the FreeRTOS source directory.
   dir_pw_third_party_freertos = "//third_party/freertos"
 
+  # Sets the 32blit source directory.
+  THIRTYTWO_BLIT_SDK = "//third_party/32blit-sdk"
+
   pw_build_PIP_CONSTRAINTS = [
     # Pigweed upstream constraints
     "$dir_pw_env_setup/py/pw_env_setup/virtualenv_setup/constraint.list",
@@ -28,4 +31,10 @@ default_args = {
 
   # Default gn build virtualenv target.
   pw_build_PYTHON_BUILD_VENV = "//:kudzu_build_venv"
+
+  # Set to true for offline pip installations:
+  pw_build_PYTHON_PIP_INSTALL_OFFLINE = false
+
+  pw_build_PYTHON_PIP_INSTALL_FIND_LINKS =
+      [ "//environment/cipd/packages/python311/pip_cache" ]
 }
