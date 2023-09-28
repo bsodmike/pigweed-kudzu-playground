@@ -45,14 +45,14 @@
         ]
       },
       "gni_file": "build_overrides/pigweed_environment.gni",
-      "optional_submodules": [
-        "third_party/pigweed-experimental/infra/config",
-        "third_party/pigweed-experimental/third_party/boringssl/src",
-        "third_party/pigweed-experimental/third_party/freertos/Source",
-        "third_party/pigweed-experimental/third_party/mbedtls/src",
-        "third_party/pigweed-experimental/third_party/nanopb",
-        "third_party/pigweed-experimental/third_party/picotls/src",
-        "third_party/pigweed-experimental/third_party/pigweed"
+      "required_submodules": [
+        "third_party/32blit-sdk",
+        "third_party/freertos",
+        "third_party/pcb/esp-rust-board",
+        "third_party/pcb/espressif-kicad-libraries",
+        "third_party/pcb/gekkio-kicad-libs",
+        "third_party/pigweed",
+        "third_party/pigweed-experimental"
       ],
       "pw_packages": [
         "glfw",
