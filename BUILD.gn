@@ -46,6 +46,15 @@ group("applications") {
   }
 }
 
+assert(
+    PICO_SRC_DIR != "",
+    string_join(
+        " ",
+        [
+          "PICO_SRC_DIR is not set but is required to build Kudzu.",
+          "Use `pw build` to build Kudzu with the required dependencies preconfigured.",
+        ]))
+
 # Python Targets
 _kudzu_python_packages = [ "//tools" ]
 
