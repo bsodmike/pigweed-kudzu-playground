@@ -233,9 +233,6 @@ namespace pw::system {
 
 void UserAppInit() {
   PW_LOG_INFO("UserAppInit");
-
-  pw::thread::DetachedThread(pw::system::WorkQueueThreadOptions(),
-                             pw::system::GetWorkQueue());
   pw::thread::DetachedThread(Common::DisplayDrawThreadOptions(), MainTask);
 }
 
