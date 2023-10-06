@@ -77,7 +77,7 @@ if not exist "%shell_file%" (
   echo Updating git submodules
   git submodule update --init
 )
-set "_tinyusb_license=%~dp0.\third_party\pico_sdk\lib\tinyusb\LICENSE"
+set "_tinyusb_license=%~dp0.\third_party\pico-sdk\lib\tinyusb\LICENSE"
 if not exist "%_tinyusb_license%" (
   cd third_party\pico-sdk
   git submodule update --init lib\tinyusb

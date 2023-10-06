@@ -92,10 +92,10 @@ if [ ! -e "$_util_sh" ]; then
   # Init without recursion.
   git submodule update --init
 fi
-if [ ! -f "$SAMPLE_PROJECT_ROOT/third_party/pico_sdk/lib/tinyusb/LICENSE" ]; then
+if [ ! -f "$PW_PROJECT_ROOT/third_party/pico-sdk/lib/tinyusb/LICENSE" ]; then
     echo "Updating git submodules for 'third_party/pico-sdk' ..."
     # Init tinyusb only with no recursion.
-    pushd third-party/pico_sdk/
+    pushd third_party/pico-sdk/
     git submodule update --init lib/tinyusb
     popd
 fi
