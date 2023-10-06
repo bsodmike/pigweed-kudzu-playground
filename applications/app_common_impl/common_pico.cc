@@ -211,13 +211,6 @@ Status Common::Init() {
   set_sys_clock_khz(250000, false);
 #endif
 
-  // Initialize all of the present standard stdio types that are linked into the
-  // binary.
-  stdio_init_all();
-
-  // Set up the default UART and assign it to the default GPIO's.
-  setup_default_uart();
-
   s_display_cs_pin.Enable();
   s_display_dc_pin.Enable();
 #if DISPLAY_RESET_GPIO != -1
