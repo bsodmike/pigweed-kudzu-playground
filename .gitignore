@@ -51,3 +51,7 @@ __pycache__/
 *_BASE_*.txt
 *_LOCAL_*.txt
 *_REMOTE_*.txt
+
+# Other
+logfile.txt
+pw_console-*logs.txt

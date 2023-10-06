@@ -46,17 +46,19 @@ pw_system_target("rp2040") {
   scheduler = PW_SYSTEM_SCHEDULER.FREERTOS
   use_pw_malloc = false
 
+  # This is critical because otherwise the Pico SDK will emit \r\n every time
+  # a \n is written out over serial.
+  global_configs =
+      [ "//third_party/pigweed/targets/rp2040_pw_system:rp2040_hal_config" ]
+
   build_args = {
     pw_build_EXECUTABLE_TARGET_TYPE = "pico_executable"
     pw_build_EXECUTABLE_TARGET_TYPE_FILE =
         get_path_info("$dir_pigweed/targets/rp2040/pico_executable.gni",
                       "abspath")
 
-    # pw_assert_BACKEND = dir_pw_assert_basic
-    # pw_log_BACKEND = dir_pw_log_basic
-
-    pw_log_BACKEND = dir_pw_log_tokenized
-    pw_log_tokenized_HANDLER_BACKEND = "$dir_pw_system:log_backend.impl"
+    pw_log_BACKEND = dir_pw_log_string
+    pw_log_string_HANDLER_BACKEND = "$dir_pw_system:log_backend"
 
     pw_third_party_freertos_CONFIG = "//targets/rp2040:freertos_config"
     pw_third_party_freertos_PORT = "$dir_pw_third_party/freertos:arm_cm0"
@@ -67,6 +69,7 @@ pw_system_target("rp2040") {
       "//targets/rp2040:pre_init",
       "$dir_pw_assert:impl",
       "$dir_pw_log:impl",
+      "$dir_pw_log_string:handler.impl",
     ]
 
     pw_sync_COUNTING_SEMAPHORE_BACKEND =
