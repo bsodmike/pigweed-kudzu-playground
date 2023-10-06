@@ -30,7 +30,7 @@ pw_executable("32blit_demo") {
     "random.h",
   ]
   deps = [
-    "$dir_app_common",
+    "//applications/app_common",
     "$dir_pw_board_led",
     "$dir_pw_color",
     "$dir_pw_display",

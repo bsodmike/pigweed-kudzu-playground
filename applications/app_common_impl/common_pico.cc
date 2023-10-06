@@ -18,6 +18,7 @@
 #define LIB_CMSIS_CORE 0
 #define LIB_PICO_STDIO_SEMIHOSTING 0
 
+#include "FreeRTOS.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include "hardware/vreg.h"
@@ -32,6 +33,10 @@
 #include "pw_status/status.h"
 #include "pw_sync/borrow.h"
 #include "pw_sync/mutex.h"
+#include "pw_thread/detached_thread.h"
+#include "pw_thread/thread.h"
+#include "pw_thread_freertos/context.h"
+#include "pw_thread_freertos/options.h"
 
 #if defined(DISPLAY_TYPE_ILI9341)
 #include "pw_display_driver_ili9341/display_driver.h"
@@ -191,6 +196,10 @@ constexpr pw::i2c::PicoInitiator::Config ki2cConfig{
 
 pw::i2c::PicoInitiator i2c_bus(ki2cConfig);
 
+static constexpr size_t kDisplayDrawThreadStackWords = 512;
+static pw::thread::freertos::StaticContextWithStack<kDisplayDrawThreadStackWords>
+    display_draw_thread_context;
+
 }  // namespace
 
 // static
@@ -251,3 +260,13 @@ Status Common::Init() {
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+const pw::thread::Options& Common::DisplayDrawThreadOptions() {
+  static constexpr auto options =
+      pw::thread::freertos::Options()
+          .set_name("DisplayDrawThread")
+          .set_static_context(display_draw_thread_context)
+          // TODO: amontanez - Find a way to better manage priorities.
+          .set_priority(static_cast<UBaseType_t>(tskIDLE_PRIORITY + 1));
+  return options;
+}

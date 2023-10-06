@@ -137,9 +137,7 @@ uint32_t CalcAverageUint32Value(PrefixedEntryRingBuffer& ring_buffer) {
   return count == 0 ? 0 : sum / count;
 }
 
-}  // namespace
-
-void MainTask() {
+void MainTask(void*) {
   // Timing variables
   uint32_t frame_start_millis = pw::spin_delay::Millis();
   uint32_t frames = 0;
@@ -229,6 +227,8 @@ void MainTask() {
   }
 }
 
+}  // namespace
+
 namespace pw::system {
 
 void UserAppInit() {
@@ -236,7 +236,7 @@ void UserAppInit() {
 
   pw::thread::DetachedThread(pw::system::WorkQueueThreadOptions(),
                              pw::system::GetWorkQueue());
-  pw::system::GetWorkQueue().CheckPushWork(MainTask);
+  pw::thread::DetachedThread(Common::DisplayDrawThreadOptions(), MainTask);
 }
 
 }  // namespace pw::system

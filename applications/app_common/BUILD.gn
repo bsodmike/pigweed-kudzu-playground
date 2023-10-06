@@ -29,6 +29,7 @@ pw_facade("app_common") {
   public_deps = [
     "$dir_pw_display",
     "$dir_pw_status",
+    "$dir_pw_thread:thread",
   ]
   public = [ "public/app_common/common.h" ]
 }

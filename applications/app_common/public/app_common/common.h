@@ -15,6 +15,7 @@
 
 #include "pw_display/display.h"
 #include "pw_status/status.h"
+#include "pw_thread/thread.h"
 
 // This class is used for initialization and to create the objects which
 // are common to the test applications.
@@ -28,4 +29,7 @@ class Common {
 
   // Return an initialized display.
   static pw::display::Display& GetDisplay();
+
+  // Provides thread options for the display thread.
+  static const pw::thread::Options& DisplayDrawThreadOptions();
 };

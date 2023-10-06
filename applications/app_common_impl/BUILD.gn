@@ -72,7 +72,7 @@ pw_source_set("stm32cube") {
     ":spi_stm32_flags",
   ]
   deps = [
-    "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+    "//applications/app_common:app_common.facade",
     "$dir_pw_digital_io_stm32cube",
     "$dir_pw_display",
     "$dir_pw_display_driver_ili9341",
@@ -86,7 +86,7 @@ pw_source_set("stm32cube") {
 
 pw_source_set("stm32") {
   deps = [
-    "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+    "//applications/app_common:app_common.facade",
     "$dir_pw_display_driver_null",
   ]
   sources = [ "common_stm32.cc" ]
@@ -98,7 +98,7 @@ pw_source_set("arduino") {
     ":spi_flags",
   ]
   deps = [
-    "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+    "//applications/app_common:app_common.facade",
     "$dir_pw_digital_io_arduino",
     "$dir_pw_display",
     "$dir_pw_display_driver_ili9341",
@@ -115,7 +115,7 @@ if (pw_third_party_mcuxpresso_SDK != "") {
   pw_source_set("mimxrt595") {
     public_configs = [ ":common_flags" ]
     deps = [
-      "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+      "//applications/app_common:app_common.facade",
       "$dir_pw_display",
       "$dir_pw_display_driver_mipi_dsi",
       "$dir_pw_framebuffer_pool_mcuxpresso",
@@ -132,7 +132,7 @@ _pico_common_deps = [
   "$PICO_ROOT/src/rp2_common/hardware_pwm",
   "$PICO_ROOT/src/rp2_common/hardware_spi",
   "$PICO_ROOT/src/rp2_common/hardware_vreg",
-  "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+  "//applications/app_common:app_common.facade",
   "$dir_pw_digital_io_rp2040",
   "$dir_pw_display",
   "$dir_pw_framebuffer_pool",
@@ -142,6 +142,8 @@ _pico_common_deps = [
   "$dir_pw_spi_rp2040",
   "$dir_pw_sync:borrow",
   "$dir_pw_sync:mutex",
+  "$dir_pw_thread:thread",
+  "$dir_pw_thread_freertos:thread",
 ]
 
 pw_source_set("pico_ili9341") {
@@ -199,10 +201,12 @@ pw_source_set("pico_st7735") {
 pw_source_set("host_imgui") {
   public_configs = [ ":common_flags" ]
   deps = [
-    "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+    "//applications/app_common:app_common.facade",
     "$dir_pw_display_driver_imgui",
     "$dir_pw_display_imgui",
     "$dir_pw_framebuffer_pool",
+    "$dir_pw_thread:thread",
+    "$dir_pw_thread_stl:thread",
   ]
   sources = [ "common_host_imgui.cc" ]
   remove_configs = []
@@ -214,9 +218,11 @@ pw_source_set("host_imgui") {
 pw_source_set("host_null") {
   public_configs = [ ":common_flags" ]
   deps = [
-    "$dir_pigweed_experimental/applications/app_common:app_common.facade",
+    "//applications/app_common:app_common.facade",
     "$dir_pw_display",
     "$dir_pw_display_driver_null",
+    "$dir_pw_thread:thread",
+    "$dir_pw_thread_stl:thread",
   ]
   sources = [ "common_host_null.cc" ]
 }

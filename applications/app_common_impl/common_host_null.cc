@@ -15,6 +15,8 @@
 #include "pw_display/display.h"
 #include "pw_display_driver_null/display_driver.h"
 #include "pw_status/try.h"
+#include "pw_thread/thread.h"
+#include "pw_thread_stl/options.h"
 
 using pw::Status;
 using pw::framebuffer::PixelFormat;
@@ -42,3 +44,8 @@ Status Common::Init() { return s_display_driver.Init(); }
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+const pw::thread::Options& Common::DisplayDrawThreadOptions() {
+  static pw::thread::stl::Options display_draw_thread_options;
+  return display_draw_thread_options;
+}

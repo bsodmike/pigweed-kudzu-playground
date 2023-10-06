@@ -17,6 +17,8 @@
 #include "pw_display_imgui/display.h"
 #include "pw_framebuffer_pool/framebuffer_pool.h"
 #include "pw_status/try.h"
+#include "pw_thread/thread.h"
+#include "pw_thread_stl/options.h"
 
 using pw::Status;
 using pw::color::color_rgb565_t;
@@ -55,3 +57,8 @@ Status Common::Init() { return s_display_driver.Init(); }
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+const pw::thread::Options& Common::DisplayDrawThreadOptions() {
+  static pw::thread::stl::Options display_draw_thread_options;
+  return display_draw_thread_options;
+}
