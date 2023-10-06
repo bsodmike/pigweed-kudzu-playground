@@ -88,11 +88,16 @@ _util_sh="$PW_ROOT/pw_env_setup/util.sh"
 
 # Double-check that the Pigweed submodule has been checked out.
 if [ ! -e "$_util_sh" ]; then
-  echo "Error: $_util_sh not found."
-  echo "Did you forget to initialize the git submodules?"
-  echo "To setup the git submodules run:"
-  echo "  git submodule update --init"
-  return
+  echo "Updating git submodules ..."
+  # Init without recursion.
+  git submodule update --init
+fi
+if [ ! -f "$SAMPLE_PROJECT_ROOT/third_party/pico_sdk/lib/tinyusb/LICENSE" ]; then
+    echo "Updating git submodules for 'third_party/pico-sdk' ..."
+    # Init tinyusb only with no recursion.
+    pushd third-party/pico_sdk/
+    git submodule update --init lib/tinyusb
+    popd
 fi
 
 . "$_util_sh"

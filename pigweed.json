@@ -51,13 +51,14 @@
         "third_party/pcb/esp-rust-board",
         "third_party/pcb/espressif-kicad-libraries",
         "third_party/pcb/gekkio-kicad-libs",
+        "third_party/pico-sdk",
+        "third_party/pico-sdk/lib/tinyusb",
         "third_party/pigweed",
         "third_party/pigweed-experimental"
       ],
       "pw_packages": [
         "glfw",
-        "imgui",
-        "pico_sdk"
+        "imgui"
       ]
     }
   }

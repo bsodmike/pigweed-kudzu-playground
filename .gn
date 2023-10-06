@@ -18,6 +18,7 @@ import("//build_overrides/pigweed.gni")
 default_args = {
   # Sets the FreeRTOS source directory.
   dir_pw_third_party_freertos = "//third_party/freertos"
+  PICO_SRC_DIR = "//third_party/pico-sdk"
 
   # Sets the 32blit source directory.
   THIRTYTWO_BLIT_SDK = "//third_party/32blit-sdk"

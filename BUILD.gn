@@ -35,25 +35,10 @@ group("applications") {
   deps = [
     "//applications/32blit_demo:all(//targets/host:host_debug)",
     "//applications/terminal_display:all(//targets/host:host_debug)",
+    "//applications/32blit_demo:all($dir_pigweed_experimental/targets/rp2040)",
+    "//applications/terminal_display:all($dir_pigweed_experimental/targets/rp2040)",
   ]
-
-  # Conditionally add so that bootstrap.sh can run.
-  if (PICO_SRC_DIR != "") {
-    deps += [
-      "//applications/32blit_demo:all($dir_pigweed_experimental/targets/rp2040)",
-      "//applications/terminal_display:all($dir_pigweed_experimental/targets/rp2040)",
-    ]
-  }
 }
-
-assert(
-    PICO_SRC_DIR != "",
-    string_join(
-        " ",
-        [
-          "PICO_SRC_DIR is not set but is required to build Kudzu.",
-          "Use `pw build` to build Kudzu with the required dependencies preconfigured.",
-        ]))
 
 # Python Targets
 _kudzu_python_packages = [ "//tools" ]

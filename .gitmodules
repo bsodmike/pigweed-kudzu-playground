@@ -19,3 +19,6 @@
 [submodule "third_party/32blit-sdk"]
 	path = third_party/32blit-sdk
 	url = https://github.com/32blit/32blit-sdk
+[submodule "third_party/pico-sdk"]
+	path = third_party/pico-sdk
+	url = https://pigweed.googlesource.com/third_party/github/raspberrypi/pico-sdk

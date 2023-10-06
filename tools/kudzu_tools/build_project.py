@@ -56,9 +56,7 @@ def build_project(force_pw_watch: bool = False) -> int:
     ]
 
     default_gn_args = dict(
-        PICO_SRC_DIR="//environment/packages/pico_sdk",
         dir_pw_third_party_glfw="//environment/packages/glfw",
-        dir_pw_third_party_freertos="//third_party/freertos",
         dir_pw_third_party_imgui="//environment/packages/imgui",
     )
 

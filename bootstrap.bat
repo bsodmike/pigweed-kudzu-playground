@@ -73,6 +73,18 @@ if "%PW_ENVIRONMENT_ROOT%"=="" (
 
 set "shell_file=%_PW_ACTUAL_ENVIRONMENT_ROOT%\activate.bat"
 
+if not exist "%shell_file%" (
+  echo Updating git submodules
+  git submodule update --init
+)
+set "_tinyusb_license=%~dp0.\third_party\pico_sdk\lib\tinyusb\LICENSE"
+if not exist "%_tinyusb_license%" (
+  cd third_party\pico-sdk
+  git submodule update --init lib\tinyusb
+  cd ..
+  cd ..
+)
+
 set "_pw_start_script=%PW_ROOT%\pw_env_setup\py\pw_env_setup\windows_env_start.py"
 
 :: If PW_SKIP_BOOTSTRAP is set, only run the activation stage instead of the
