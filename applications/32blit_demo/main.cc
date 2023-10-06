@@ -30,6 +30,9 @@
 #include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
+#include "pw_system/target_hooks.h"
+#include "pw_system/work_queue.h"
+#include "pw_thread/detached_thread.h"
 #include "random.h"
 
 #if defined(USE_FREERTOS)
@@ -42,35 +45,6 @@ using pw::color::colors_pico8_rgb565;
 using pw::display::Display;
 using pw::framebuffer::Framebuffer;
 using pw::ring_buffer::PrefixedEntryRingBuffer;
-
-// TODO(tonymd): move this code into a pre_init section (i.e. boot.cc) which
-//               is part of the target. Not all targets currently have this.
-#if defined(DEFINE_FREERTOS_MEMORY_FUNCTIONS)
-std::array<StackType_t, 100 /*configMINIMAL_STACK_SIZE*/> freertos_idle_stack;
-StaticTask_t freertos_idle_tcb;
-
-std::array<StackType_t, configTIMER_TASK_STACK_DEPTH> freertos_timer_stack;
-StaticTask_t freertos_timer_tcb;
-
-extern "C" {
-// Required for configUSE_TIMERS.
-void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
-                                    StackType_t** ppxTimerTaskStackBuffer,
-                                    uint32_t* pulTimerTaskStackSize) {
-  *ppxTimerTaskTCBBuffer = &freertos_timer_tcb;
-  *ppxTimerTaskStackBuffer = freertos_timer_stack.data();
-  *pulTimerTaskStackSize = freertos_timer_stack.size();
-}
-
-void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer,
-                                   StackType_t** ppxIdleTaskStackBuffer,
-                                   uint32_t* pulIdleTaskStackSize) {
-  *ppxIdleTaskTCBBuffer = &freertos_idle_tcb;
-  *ppxIdleTaskStackBuffer = freertos_idle_stack.data();
-  *pulIdleTaskStackSize = freertos_idle_stack.size();
-}
-}       // extern "C"
-#endif  // defined(DEFINE_FREERTOS_MEMORY_FUNCTIONS)
 
 namespace {
 
@@ -165,7 +139,7 @@ uint32_t CalcAverageUint32Value(PrefixedEntryRingBuffer& ring_buffer) {
 
 }  // namespace
 
-void MainTask(void* pvParameters) {
+void MainTask() {
   // Timing variables
   uint32_t frame_start_millis = pw::spin_delay::Millis();
   uint32_t frames = 0;
@@ -255,19 +229,14 @@ void MainTask(void* pvParameters) {
   }
 }
 
-int main(void) {
-#if defined(USE_FREERTOS)
-  TaskHandle_t task_handle = xTaskCreateStatic(MainTask,
-                                               "main",
-                                               s_freertos_stack.size(),
-                                               /*pvParameters=*/nullptr,
-                                               tskIDLE_PRIORITY,
-                                               s_freertos_stack.data(),
-                                               &s_freertos_tcb);
-  PW_CHECK_NOTNULL(task_handle);  // Ensure it succeeded.
-  vTaskStartScheduler();
-#else
-  MainTask(/*pvParameters=*/nullptr);
-#endif
-  return 0;
+namespace pw::system {
+
+void UserAppInit() {
+  PW_LOG_INFO("UserAppInit");
+
+  pw::thread::DetachedThread(pw::system::WorkQueueThreadOptions(),
+                             pw::system::GetWorkQueue());
+  pw::system::GetWorkQueue().CheckPushWork(MainTask);
 }
+
+}  // namespace pw::system

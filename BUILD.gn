@@ -33,10 +33,10 @@ group("default") {
 
 group("applications") {
   deps = [
-    "//applications/32blit_demo:all(//targets/host:host_debug)",
-    "//applications/terminal_display:all(//targets/host:host_debug)",
-    "//applications/32blit_demo:all($dir_pigweed_experimental/targets/rp2040)",
-    "//applications/terminal_display:all($dir_pigweed_experimental/targets/rp2040)",
+    "//applications/32blit_demo:all(//targets/host:host_device_simulator.speed_optimized)",
+    "//applications/32blit_demo:all(//targets/rp2040:rp2040.size_optimized)",
+    "//applications/terminal_display:all(//targets/host:host_device_simulator.speed_optimized)",
+    "//applications/terminal_display:all(//targets/rp2040:rp2040.size_optimized)",
   ]
 }
 

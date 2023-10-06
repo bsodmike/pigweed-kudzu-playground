@@ -144,9 +144,10 @@ pw::framebuffer_pool::FramebufferPool s_fb_pool({
     .pixel_format = PixelFormat::RGB565,
 });
 DisplayDriver s_display_driver({
-  .data_cmd_gpio = s_display_dc_pin, .spi_cs_gpio = s_display_cs_pin,
+  .data_cmd_gpio = s_display_dc_pin.as<pw::digital_io::DigitalOut>(),
+  .spi_cs_gpio = s_display_cs_pin.as<pw::digital_io::DigitalOut>(),
 #if DISPLAY_RESET_GPIO != -1
-  .reset_gpio = &s_display_reset_pin,
+  .reset_gpio = &s_display_reset_pin.as<pw::digital_io::DigitalOut>(),
 #else
   .reset_gpio = nullptr,
 #endif
@@ -184,8 +185,8 @@ SpiValues::SpiValues(pw::spi::Config config,
 constexpr pw::i2c::PicoInitiator::Config ki2cConfig{
     .i2c_block = 0,
     .baud_rate_bps = 400'000,
-    .sda_pin = 4,
-    .scl_pin = 5,
+    .sda_pin = 8,
+    .scl_pin = 9,
 };
 
 pw::i2c::PicoInitiator i2c_bus(ki2cConfig);

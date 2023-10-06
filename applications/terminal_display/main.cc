@@ -40,13 +40,16 @@
 #include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
+#include "pw_system/target_hooks.h"
+#include "pw_system/work_queue.h"
+#include "pw_thread/detached_thread.h"
 #include "pw_touchscreen/touchscreen.h"
 #include "text_buffer.h"
 
-#if defined(USE_FREERTOS)
-#include "FreeRTOS.h"
-#include "task.h"
-#endif  // if defined(USE_FREERTOS)
+// #if defined(USE_FREERTOS)
+// #include "FreeRTOS.h"
+// #include "task.h"
+// #endif  // if defined(USE_FREERTOS)
 
 using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
@@ -57,36 +60,12 @@ using pw::math::Size;
 using pw::math::Vector2;
 using pw::ring_buffer::PrefixedEntryRingBuffer;
 
-// TODO(cmumford): move this code into a pre_init section (i.e. boot.cc) which
-//                 is part of the target. Not all targets currently have this.
-#if defined(DEFINE_FREERTOS_MEMORY_FUNCTIONS)
-std::array<StackType_t, 100 /*configMINIMAL_STACK_SIZE*/> freertos_idle_stack;
-StaticTask_t freertos_idle_tcb;
-
-std::array<StackType_t, configTIMER_TASK_STACK_DEPTH> freertos_timer_stack;
-StaticTask_t freertos_timer_tcb;
-
-extern "C" {
-// Required for configUSE_TIMERS.
-void vApplicationGetTimerTaskMemory(StaticTask_t** ppxTimerTaskTCBBuffer,
-                                    StackType_t** ppxTimerTaskStackBuffer,
-                                    uint32_t* pulTimerTaskStackSize) {
-  *ppxTimerTaskTCBBuffer = &freertos_timer_tcb;
-  *ppxTimerTaskStackBuffer = freertos_timer_stack.data();
-  *pulTimerTaskStackSize = freertos_timer_stack.size();
-}
-
-void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer,
-                                   StackType_t** ppxIdleTaskStackBuffer,
-                                   uint32_t* pulIdleTaskStackSize) {
-  *ppxIdleTaskTCBBuffer = &freertos_idle_tcb;
-  *ppxIdleTaskStackBuffer = freertos_idle_stack.data();
-  *pulIdleTaskStackSize = freertos_idle_stack.size();
-}
-}       // extern "C"
-#endif  // defined(DEFINE_FREERTOS_MEMORY_FUNCTIONS)
-
 namespace {
+
+// #if defined(USE_FREERTOS)
+// std::array<StackType_t, configMINIMAL_STACK_SIZE> s_freertos_stack;
+// StaticTask_t s_freertos_tcb;
+// #endif  // defined(USE_FREERTOS)
 
 constexpr color_rgb565_t kBlack = 0U;
 constexpr color_rgb565_t kWhite = 0xffff;
@@ -137,10 +116,6 @@ constexpr Size<int> kButtonSize = {kButtonWidth, 12};
 TextBuffer s_log_text_buffer;
 DemoDecoder s_demo_decoder(s_log_text_buffer);
 Button g_button(kButtonLabel, kButtonTL, kButtonSize);
-#if defined(USE_FREERTOS)
-std::array<StackType_t, configMINIMAL_STACK_SIZE> s_freertos_stack;
-StaticTask_t s_freertos_tcb;
-#endif  // defined(USE_FREERTOS)
 
 void DrawButton(const Button& button,
                 color_rgb565_t bg_color,
@@ -229,30 +204,30 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
   int sprite_pos_x = 10;
   int sprite_pos_y = 24;
   int sprite_scale = 4;
-  int border_size = 8;
+  // int border_size = 8;
 
-  // Draw the dark blue border
-  pw::draw::DrawRectWH(
-      framebuffer,
-      sprite_pos_x - border_size,
-      sprite_pos_y - border_size,
-      pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
-      pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
-      colors_pico8_rgb565[COLOR_DARK_BLUE],
-      true);
+  // // Draw the dark blue border
+  // pw::draw::DrawRectWH(
+  //     framebuffer,
+  //     sprite_pos_x - border_size,
+  //     sprite_pos_y - border_size,
+  //     pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
+  //     pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
+  //     colors_pico8_rgb565[COLOR_DARK_BLUE],
+  //     true);
 
-  // Shrink the border
-  border_size = 4;
+  // // Shrink the border
+  // border_size = 4;
 
-  // Draw the light blue background
-  pw::draw::DrawRectWH(
-      framebuffer,
-      sprite_pos_x - border_size,
-      sprite_pos_y - border_size,
-      pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
-      pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
-      colors_pico8_rgb565[COLOR_BLUE],
-      true);
+  // // Draw the light blue background
+  // pw::draw::DrawRectWH(
+  //     framebuffer,
+  //     sprite_pos_x - border_size,
+  //     sprite_pos_y - border_size,
+  //     pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
+  //     pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
+  //     colors_pico8_rgb565[COLOR_BLUE],
+  //     true);
 
   static Vector2<int> sun_offset;
   static int motion_dir = -1;
@@ -262,7 +237,7 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
     sun_offset.x += motion_dir;
   if ((frame_num % 15) == 0)
     sun_offset.y -= motion_dir;
-  if (sun_offset.x < -60)
+  if (sun_offset.x < -100)
     motion_dir = 1;
   else if (sun_offset.x > 10)
     motion_dir = -1;
@@ -285,20 +260,22 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
                        colors_pico8_rgb565[COLOR_YELLOW],
                        true);
 
-  // Draw the farm sprite's shadow
-  pigweed_farm_sprite_sheet.current_index = 1;
-  pw::draw::DrawSprite(framebuffer,
-                       sprite_pos_x + 2,
-                       sprite_pos_y + 2,
-                       &pigweed_farm_sprite_sheet,
-                       4);
+  // // Draw the farm sprite's shadow
+  // pigweed_farm_sprite_sheet.current_index = 1;
+  // pw::draw::DrawSprite(framebuffer,
+  //                      sprite_pos_x + 2,
+  //                      sprite_pos_y + 2,
+  //                      &pigweed_farm_sprite_sheet,
+  //                      4);
 
-  // Draw the farm sprite
-  pigweed_farm_sprite_sheet.current_index = 0;
-  pw::draw::DrawSprite(
-      framebuffer, sprite_pos_x, sprite_pos_y, &pigweed_farm_sprite_sheet, 4);
+  // // Draw the farm sprite
+  // pigweed_farm_sprite_sheet.current_index = 0;
+  // pw::draw::DrawSprite(
+  //     framebuffer, sprite_pos_x, sprite_pos_y, &pigweed_farm_sprite_sheet,
+  //     4);
 
-  return 76;
+  // return 76;
+  return 0;
 }
 
 void DrawFPS(Vector2<int> tl,
@@ -386,12 +363,12 @@ int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
 // Draw the application header section which is mostly static text/graphics.
 // Return the height (in pixels) of the header.
 int DrawHeader(Framebuffer& framebuffer, std::wstring_view fps_msg) {
-  DrawButton(
-      g_button, /*bg_color=*/colors_pico8_rgb565[COLOR_BLUE], framebuffer);
+  // DrawButton(
+  //     g_button, /*bg_color=*/colors_pico8_rgb565[COLOR_BLUE], framebuffer);
   Vector2<int> tl = {0, 0};
   tl.y = DrawPigweedSprite(framebuffer);
 
-  tl.y = DrawPigweedBanner(tl, framebuffer);
+  // tl.y = DrawPigweedBanner(tl, framebuffer);
   constexpr int kFontSheetMargin = 4;
   tl.y += kFontSheetMargin;
 
@@ -455,7 +432,7 @@ uint32_t CalcAverageUint32Value(PrefixedEntryRingBuffer& ring_buffer) {
 
 }  // namespace
 
-void MainTask(void* pvParameters) {
+void MainTask() {
   // Timing variables
   uint32_t frame_start_millis = pw::spin_delay::Millis();
   uint32_t frames = 0;
@@ -470,7 +447,8 @@ void MainTask(void* pvParameters) {
   draw_times.SetBuffer(draw_buffer);
   flush_times.SetBuffer(flush_buffer);
 
-  pw::log_basic::SetOutput(LogCallback);
+  // TODO(tonymd): Is there a way to hook this up outside of log_basic?
+  // pw::log_basic::SetOutput(LogCallback);
 
   pw::board_led::Init();
   PW_CHECK_OK(Common::Init());
@@ -492,27 +470,29 @@ void MainTask(void* pvParameters) {
 
   // The display loop.
   while (1) {
-    pw::math::Vector3<int> point = display.GetTouchPoint();
-    // Check for touchscreen events.
-    if (display.TouchscreenAvailable() && display.NewTouchEvent()) {
-      if (point.z > 0) {
-        bool button_just_pressed = false;
-        if (point.z != last_frame_touch_state.z)
-          button_just_pressed = true;
-        // New touch event
-        Vector2<int> touch_location{point.x, point.y};
+    // // pw::math::Vector3<int> point = display.GetTouchPoint();
+    // pw::math::Vector3<int> point = pw::touchscreen::GetTouchPoint();
+    // // Check for touchscreen events.
+    // // if (display.TouchscreenAvailable() && display.NewTouchEvent()) {
+    // if (pw::touchscreen::Available() && pw::touchscreen::NewTouchEvent()) {
+    //   if (point.z > 0) {
+    //     bool button_just_pressed = false;
+    //     if (point.z != last_frame_touch_state.z)
+    //       button_just_pressed = true;
+    //     // New touch event
+    //     Vector2<int> touch_location{point.x, point.y};
 
-        PW_LOG_DEBUG("Touch: x:%d, y:%d, z:%d", point.x, point.y, point.z);
+    //     PW_LOG_DEBUG("Touch: x:%d, y:%d, z:%d", point.x, point.y, point.z);
 
-        // If a button was just pressed, call CreateDemoLogMessages.
-        if (button_just_pressed && g_button.Contains(touch_location)) {
-          CreateDemoLogMessages();
-        }
-      }
-    }
-    last_frame_touch_state.x = point.x;
-    last_frame_touch_state.y = point.y;
-    last_frame_touch_state.z = point.z;
+    //     // If a button was just pressed, call CreateDemoLogMessages.
+    //     if (button_just_pressed && g_button.Contains(touch_location)) {
+    //       CreateDemoLogMessages();
+    //     }
+    //   }
+    // }
+    // last_frame_touch_state.x = point.x;
+    // last_frame_touch_state.y = point.y;
+    // last_frame_touch_state.z = point.z;
 
     uint32_t start = pw::spin_delay::Millis();
     framebuffer = display.GetFramebuffer();
@@ -550,19 +530,14 @@ void MainTask(void* pvParameters) {
   }
 }
 
-int main(void) {
-#if defined(USE_FREERTOS)
-  TaskHandle_t task_handle = xTaskCreateStatic(MainTask,
-                                               "main",
-                                               s_freertos_stack.size(),
-                                               /*pvParameters=*/nullptr,
-                                               tskIDLE_PRIORITY,
-                                               s_freertos_stack.data(),
-                                               &s_freertos_tcb);
-  PW_CHECK_NOTNULL(task_handle);  // Ensure it succeeded.
-  vTaskStartScheduler();
-#else
-  MainTask(/*pvParameters=*/nullptr);
-#endif
-  return 0;
+namespace pw::system {
+
+void UserAppInit() {
+  PW_LOG_INFO("UserAppInit");
+
+  pw::thread::DetachedThread(pw::system::WorkQueueThreadOptions(),
+                             pw::system::GetWorkQueue());
+  pw::system::GetWorkQueue().CheckPushWork(MainTask);
 }
+
+}  // namespace pw::system

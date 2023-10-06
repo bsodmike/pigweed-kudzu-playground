@@ -42,6 +42,8 @@ pw_executable("32blit_demo") {
     "$dir_pw_spin_delay",
     "$dir_pw_string",
     "$dir_pw_sys_io",
+    "$dir_pw_system:work_queue",
+    "$dir_pw_thread:thread",
     "$pw_dir_third_party_32blit:32blit",
   ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
