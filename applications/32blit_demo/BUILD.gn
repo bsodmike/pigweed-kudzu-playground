@@ -24,13 +24,8 @@ group("all") {
 }
 
 pw_executable("32blit_demo") {
-  sources = [
-    "main.cc",
-    "random.cc",
-    "random.h",
-  ]
+  sources = [ "main.cc" ]
   deps = [
-    "//applications/app_common",
     "$dir_pw_board_led",
     "$dir_pw_color",
     "$dir_pw_display",
@@ -45,6 +40,8 @@ pw_executable("32blit_demo") {
     "$dir_pw_system:work_queue",
     "$dir_pw_thread:thread",
     "$pw_dir_third_party_32blit:32blit",
+    "//applications/app_common",
+    "//lib/random",
   ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
 

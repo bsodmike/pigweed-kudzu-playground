@@ -17,6 +17,7 @@
 
 #include "app_common/common.h"
 #include "graphics/surface.hpp"
+#include "libkudzu/random.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
 #include "pw_board_led/led.h"
@@ -33,12 +34,6 @@
 #include "pw_system/target_hooks.h"
 #include "pw_system/work_queue.h"
 #include "pw_thread/detached_thread.h"
-#include "random.h"
-
-#if defined(USE_FREERTOS)
-#include "FreeRTOS.h"
-#include "task.h"
-#endif  // if defined(USE_FREERTOS)
 
 using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
@@ -47,11 +42,6 @@ using pw::framebuffer::Framebuffer;
 using pw::ring_buffer::PrefixedEntryRingBuffer;
 
 namespace {
-
-#if defined(USE_FREERTOS)
-std::array<StackType_t, configMINIMAL_STACK_SIZE> s_freertos_stack;
-StaticTask_t s_freertos_tcb;
-#endif  // defined(USE_FREERTOS)
 
 struct test_particle {
   blit::Vec2 pos;
