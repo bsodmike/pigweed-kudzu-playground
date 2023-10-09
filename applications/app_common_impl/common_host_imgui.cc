@@ -27,7 +27,7 @@ using pw::framebuffer_pool::FramebufferPool;
 
 namespace {
 
-constexpr uint16_t kDisplayScaleFactor = 1;
+constexpr uint16_t kDisplayScaleFactor = 2;
 constexpr pw::math::Size<uint16_t> kFramebufferDimensions = {
     .width = DISPLAY_WIDTH / kDisplayScaleFactor,
     .height = DISPLAY_HEIGHT / kDisplayScaleFactor,

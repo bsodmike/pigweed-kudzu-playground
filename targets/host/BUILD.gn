@@ -29,7 +29,6 @@ pw_system_target("host_device_simulator") {
     app_common_BACKEND = "//applications/app_common_impl:host_null"
     pw_app_common_DISPLAY_WIDTH = "320"
     pw_app_common_DISPLAY_HEIGHT = "240"
-    pw_display_DISPLAY_RESIZE = 1
 
     if (dir_pw_third_party_imgui != "") {
       app_common_BACKEND = "//applications/app_common_impl:host_imgui"

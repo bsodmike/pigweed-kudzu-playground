@@ -35,6 +35,8 @@ group("applications") {
   deps = [
     "//applications/32blit_demo:all(//targets/host:host_device_simulator.speed_optimized)",
     "//applications/32blit_demo:all(//targets/rp2040:rp2040.size_optimized)",
+    "//applications/badge:all(//targets/host:host_device_simulator.speed_optimized)",
+    "//applications/badge:all(//targets/rp2040:rp2040.size_optimized)",
     "//applications/terminal_display:all(//targets/host:host_device_simulator.speed_optimized)",
     "//applications/terminal_display:all(//targets/rp2040:rp2040.size_optimized)",
   ]
