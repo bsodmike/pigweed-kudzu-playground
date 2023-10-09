@@ -23,6 +23,7 @@
 
 #include "ansi.h"
 #include "app_common/common.h"
+#include "libkudzu/framecounter.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
 #include "pw_board_led/led.h"
@@ -46,11 +47,6 @@
 #include "pw_touchscreen/touchscreen.h"
 #include "text_buffer.h"
 
-// #if defined(USE_FREERTOS)
-// #include "FreeRTOS.h"
-// #include "task.h"
-// #endif  // if defined(USE_FREERTOS)
-
 using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
 using pw::display::Display;
@@ -58,14 +54,8 @@ using pw::draw::FontSet;
 using pw::framebuffer::Framebuffer;
 using pw::math::Size;
 using pw::math::Vector2;
-using pw::ring_buffer::PrefixedEntryRingBuffer;
 
 namespace {
-
-// #if defined(USE_FREERTOS)
-// std::array<StackType_t, configMINIMAL_STACK_SIZE> s_freertos_stack;
-// StaticTask_t s_freertos_tcb;
-// #endif  // defined(USE_FREERTOS)
 
 constexpr color_rgb565_t kBlack = 0U;
 constexpr color_rgb565_t kWhite = 0xffff;
@@ -278,20 +268,6 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
   return 0;
 }
 
-void DrawFPS(Vector2<int> tl,
-             Framebuffer& framebuffer,
-             std::wstring_view fps_msg) {
-  if (fps_msg.empty())
-    return;
-
-  DrawString(fps_msg,
-             tl,
-             colors_pico8_rgb565[COLOR_PEACH],
-             kBlack,
-             pw::draw::font6x8,
-             framebuffer);
-}
-
 // Draw the pigweed text banner.
 // Returns the bottom Y coordinate of the bottommost pixel set.
 int DrawPigweedBanner(Vector2<int> tl, Framebuffer& framebuffer) {
@@ -319,7 +295,7 @@ int DrawPigweedBanner(Vector2<int> tl, Framebuffer& framebuffer) {
 // Returns the bottom Y coordinate drawn.
 int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
   constexpr int kFontSheetVerticalPadding = 4;
-  constexpr int kFontSheetNumColumns = 48;
+  constexpr int kFontSheetNumColumns = 26;
 
   int initial_x = tl.x;
   tl = DrawColorFontSheet(tl,
@@ -348,11 +324,10 @@ int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
                                      /*bg_color=*/kBlack,
                                      pw::draw::font6x8,
                                      framebuffer);
-  tl.x += string_dims.width + pw::draw::font6x8.width;
-  tl.y -= pw::draw::font6x8.height;
+  tl.x = 0;
 
   tl = DrawTestFontSheet(tl,
-                         /*num_columns=*/32,
+                         kFontSheetNumColumns,
                          /*fg_color=*/kWhite,
                          /*bg_color=*/kBlack,
                          pw::draw::font6x8_box_chars,
@@ -362,7 +337,7 @@ int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
 
 // Draw the application header section which is mostly static text/graphics.
 // Return the height (in pixels) of the header.
-int DrawHeader(Framebuffer& framebuffer, std::wstring_view fps_msg) {
+int DrawHeader(Framebuffer& framebuffer) {
   // DrawButton(
   //     g_button, /*bg_color=*/colors_pico8_rgb565[COLOR_BLUE], framebuffer);
   Vector2<int> tl = {0, 0};
@@ -371,8 +346,6 @@ int DrawHeader(Framebuffer& framebuffer, std::wstring_view fps_msg) {
   // tl.y = DrawPigweedBanner(tl, framebuffer);
   constexpr int kFontSheetMargin = 4;
   tl.y += kFontSheetMargin;
-
-  DrawFPS({1, 2}, framebuffer, fps_msg);
 
   return DrawFontSheets(tl, framebuffer);
 }
@@ -400,9 +373,9 @@ void DrawLogTextBuffer(int top, const FontSet& font, Framebuffer& framebuffer) {
   }
 }
 
-void DrawFrame(Framebuffer& framebuffer, std::wstring_view fps_msg) {
+void DrawFrame(Framebuffer& framebuffer) {
   constexpr int kHeaderMargin = 4;
-  int header_bottom = DrawHeader(framebuffer, fps_msg);
+  int header_bottom = DrawHeader(framebuffer);
   DrawLogTextBuffer(
       header_bottom + kHeaderMargin, pw::draw::font6x8, framebuffer);
 }
@@ -415,35 +388,8 @@ void CreateDemoLogMessages() {
   PW_LOG_DEBUG("Debug output");
 }
 
-// Given a ring buffer full of uint32_t values, return the average value
-// or zero if empty (or iteration error).
-uint32_t CalcAverageUint32Value(PrefixedEntryRingBuffer& ring_buffer) {
-  uint64_t sum = 0;
-  uint32_t count = 0;
-  for (const auto& entry_info : ring_buffer) {
-    PW_ASSERT(entry_info.buffer.size() == sizeof(uint32_t));
-    uint32_t val;
-    std::memcpy(&val, entry_info.buffer.data(), sizeof(val));
-    sum += val;
-    count++;
-  }
-  return count == 0 ? 0 : sum / count;
-}
-
 void MainTask(void*) {
-  // Timing variables
-  uint32_t frame_start_millis = pw::spin_delay::Millis();
-  uint32_t frames = 0;
-  int frames_per_second = 0;
-  std::array<wchar_t, 40> fps_buffer = {0};
-  std::wstring_view fps_view(fps_buffer.data(), 0);
-  std::byte draw_buffer[30 * sizeof(uint32_t)];
-  std::byte flush_buffer[30 * sizeof(uint32_t)];
-  PrefixedEntryRingBuffer draw_times;
-  PrefixedEntryRingBuffer flush_times;
-
-  draw_times.SetBuffer(draw_buffer);
-  flush_times.SetBuffer(flush_buffer);
+  kudzu::FrameCounter frame_counter = kudzu::FrameCounter();
 
   // TODO(tonymd): Is there a way to hook this up outside of log_basic?
   // pw::log_basic::SetOutput(LogCallback);
@@ -462,12 +408,13 @@ void MainTask(void*) {
 
   pw::math::Vector3<int> last_frame_touch_state(0, 0, 0);
 
-  DrawFrame(framebuffer, fps_view);
+  DrawFrame(framebuffer);
   // Push the frame buffer to the screen.
   display.ReleaseFramebuffer(std::move(framebuffer));
 
   // The display loop.
   while (1) {
+    frame_counter.StartFrame();
     // // pw::math::Vector3<int> point = display.GetTouchPoint();
     // pw::math::Vector3<int> point = pw::touchscreen::GetTouchPoint();
     // // Check for touchscreen events.
@@ -492,39 +439,19 @@ void MainTask(void*) {
     // last_frame_touch_state.y = point.y;
     // last_frame_touch_state.z = point.z;
 
-    uint32_t start = pw::spin_delay::Millis();
     framebuffer = display.GetFramebuffer();
     PW_ASSERT(framebuffer.is_valid());
     pw::draw::Fill(framebuffer, kBlack);
-    DrawFrame(framebuffer, fps_view);
-    uint32_t end = pw::spin_delay::Millis();
-    uint32_t time = end - start;
-    draw_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
-    start = end;
+    DrawFrame(framebuffer);
+
+    // Update timers
+    frame_counter.EndDraw();
 
     display.ReleaseFramebuffer(std::move(framebuffer));
-    time = pw::spin_delay::Millis() - start;
-    flush_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
+    frame_counter.EndFlush();
 
     // Every second make a log message.
-    frames++;
-    if (pw::spin_delay::Millis() > frame_start_millis + 1000) {
-      frames_per_second = frames;
-      frames = 0;
-      PW_LOG_INFO("FPS:%d, Draw:%dms, Flush:%dms",
-                  frames_per_second,
-                  CalcAverageUint32Value(draw_times),
-                  CalcAverageUint32Value(flush_times));
-      int len = std::swprintf(fps_buffer.data(),
-                              fps_buffer.size(),
-                              L"FPS:%d, Draw:%dms, Flush:%dms",
-                              frames_per_second,
-                              CalcAverageUint32Value(draw_times),
-                              CalcAverageUint32Value(flush_times));
-      fps_view = std::wstring_view(fps_buffer.data(), len);
-
-      frame_start_millis = pw::spin_delay::Millis();
-    }
+    frame_counter.EndFrame();
   }
 }
 

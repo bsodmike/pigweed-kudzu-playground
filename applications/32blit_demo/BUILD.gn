@@ -33,7 +33,6 @@ pw_executable("32blit_demo") {
     "$dir_pw_framebuffer",
     "$dir_pw_log",
     "$dir_pw_random",
-    "$dir_pw_ring_buffer",
     "$dir_pw_spin_delay",
     "$dir_pw_string",
     "$dir_pw_sys_io",
@@ -41,23 +40,13 @@ pw_executable("32blit_demo") {
     "$dir_pw_thread:thread",
     "$pw_dir_third_party_32blit:32blit",
     "//applications/app_common",
+    "//lib/framecounter",
     "//lib/random",
   ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
 
   if (host_os == "linux") {
     remove_configs += [ "$dir_pw_toolchain/host_clang:linux_sysroot" ]
-  }
-
-  # Hack for targets with no pre-init target implementation.
-  defines = []
-  if (pw_build_EXECUTABLE_TARGET_TYPE != "executable" &&
-      pw_build_EXECUTABLE_TARGET_TYPE != "arduino_executable") {
-    defines += [ "USE_FREERTOS" ]
-    deps += [ "$dir_pw_third_party/freertos" ]
-  }
-  if (pw_build_EXECUTABLE_TARGET_TYPE == "pico_executable") {
-    defines += [ "DEFINE_FREERTOS_MEMORY_FUNCTIONS=1" ]
   }
 
   if (pw_build_EXECUTABLE_TARGET_TYPE == "arduino_executable" ||

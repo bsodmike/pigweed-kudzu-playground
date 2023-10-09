@@ -17,6 +17,7 @@
 
 #include "app_common/common.h"
 #include "graphics/surface.hpp"
+#include "libkudzu/framecounter.h"
 #include "libkudzu/random.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
@@ -27,7 +28,6 @@
 #include "pw_display/display.h"
 #include "pw_framebuffer/framebuffer.h"
 #include "pw_log/log.h"
-#include "pw_ring_buffer/prefixed_entry_ring_buffer.h"
 #include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
@@ -39,7 +39,6 @@ using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
 using pw::display::Display;
 using pw::framebuffer::Framebuffer;
-using pw::ring_buffer::PrefixedEntryRingBuffer;
 
 namespace {
 
@@ -112,35 +111,9 @@ void rain(blit::Surface screen, uint32_t time_ms, blit::Rect floor_position) {
   last_time_ms = time_ms;
 };
 
-// Given a ring buffer full of uint32_t values, return the average value
-// or zero if empty (or iteration error).
-uint32_t CalcAverageUint32Value(PrefixedEntryRingBuffer& ring_buffer) {
-  uint64_t sum = 0;
-  uint32_t count = 0;
-  for (const auto& entry_info : ring_buffer) {
-    PW_ASSERT(entry_info.buffer.size() == sizeof(uint32_t));
-    uint32_t val;
-    std::memcpy(&val, entry_info.buffer.data(), sizeof(val));
-    sum += val;
-    count++;
-  }
-  return count == 0 ? 0 : sum / count;
-}
-
 void MainTask(void*) {
   // Timing variables
-  uint32_t frame_start_millis = pw::spin_delay::Millis();
-  uint32_t frames = 0;
-  int frames_per_second = 0;
-  std::array<wchar_t, 40> fps_buffer = {0};
-  std::wstring_view fps_view(fps_buffer.data(), 0);
-  std::byte draw_buffer[30 * sizeof(uint32_t)];
-  std::byte flush_buffer[30 * sizeof(uint32_t)];
-  PrefixedEntryRingBuffer draw_times;
-  PrefixedEntryRingBuffer flush_times;
-
-  draw_times.SetBuffer(draw_buffer);
-  flush_times.SetBuffer(flush_buffer);
+  kudzu::FrameCounter frame_counter = kudzu::FrameCounter();
 
   pw::board_led::Init();
   PW_CHECK_OK(Common::Init());
@@ -162,7 +135,8 @@ void MainTask(void*) {
 
   // The display loop.
   while (1) {
-    uint32_t start = pw::spin_delay::Millis();
+    frame_counter.StartFrame();
+
     framebuffer = display.GetFramebuffer();
     PW_ASSERT(framebuffer.is_valid());
     screen.data = (uint8_t*)framebuffer.data();
@@ -179,41 +153,20 @@ void MainTask(void*) {
         blit::Point((screen.bounds.w / 2) - (text_size.w / 2),
                     (screen.bounds.h * .75) - (text_size.h / 2)),
         text_size);
-    rain(screen, start - delta_screen_draw, text_rect);
+    rain(screen, frame_counter.start - delta_screen_draw, text_rect);
     screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
     screen.text(
         text, blit::minimal_font, text_rect, true, blit::TextAlign::top_left);
-    delta_screen_draw = pw::spin_delay::Millis() - start;
+    delta_screen_draw = pw::spin_delay::Millis() - frame_counter.start;
 
     // Update timers
-    uint32_t end = pw::spin_delay::Millis();
-    uint32_t time = end - start;
-    draw_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
-    start = end;
+    frame_counter.EndDraw();
 
     display.ReleaseFramebuffer(std::move(framebuffer));
-    time = pw::spin_delay::Millis() - start;
-    flush_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
+    frame_counter.EndFlush();
 
     // Every second make a log message.
-    frames++;
-    if (pw::spin_delay::Millis() > frame_start_millis + 1000) {
-      frames_per_second = frames;
-      frames = 0;
-      PW_LOG_INFO("FPS:%d, Draw:%dms, Flush:%dms",
-                  frames_per_second,
-                  CalcAverageUint32Value(draw_times),
-                  CalcAverageUint32Value(flush_times));
-      int len = std::swprintf(fps_buffer.data(),
-                              fps_buffer.size(),
-                              L"FPS:%d, Draw:%dms, Flush:%dms",
-                              frames_per_second,
-                              CalcAverageUint32Value(draw_times),
-                              CalcAverageUint32Value(flush_times));
-      fps_view = std::wstring_view(fps_buffer.data(), len);
-
-      frame_start_millis = pw::spin_delay::Millis();
-    }
+    frame_counter.EndFrame();
   }
 }
 
