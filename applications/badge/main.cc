@@ -142,6 +142,7 @@ void MainTask(void*) {
 
   Touchscreen& touchscreen = Common::GetTouchscreen();
 
+  uint32_t frame_start_millis = pw::spin_delay::Millis();
   // The display loop.
   while (1) {
     frame_counter.StartFrame();
@@ -212,6 +213,11 @@ void MainTask(void*) {
 
     // Every second make a log message.
     frame_counter.EndFrame();
+
+    if (pw::spin_delay::Millis() > frame_start_millis + 10000) {
+      Common::FrameCallback();
+      frame_start_millis = pw::spin_delay::Millis();
+    }
   }
 }
 

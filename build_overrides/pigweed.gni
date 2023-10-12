@@ -31,4 +31,7 @@ declare_args() {
       get_path_info("../lib/pw_touchscreen_null", "abspath")
   dir_pw_touchscreen_ft6236 =
       get_path_info("../lib/pw_touchscreen_ft6236", "abspath")
+  dir_pw_tca9535 = get_path_info("../lib/pw_tca9535", "abspath")
+  dir_pw_max17948 = get_path_info("../lib/pw_max17948", "abspath")
+  dir_pw_icm42670p = get_path_info("../lib/pw_icm42670p", "abspath")
 }

@@ -57,6 +57,8 @@ Touchscreen s_touchscreen = Touchscreen();
 }  // namespace
 
 // static
+Status Common::FrameCallback() { return pw::OkStatus(); }
+
 Status Common::Init() { return s_display_driver.Init(); }
 
 // static

@@ -63,8 +63,8 @@ declare_args() {
   pw_app_common_SPI_CLOCK_GPIO = ""
 
   # RP2040 I2C pins.
-  pw_app_common_I2C_BUS0_SCL = "8"
-  pw_app_common_I2C_BUS0_SDA = "9"
-  pw_app_common_I2C_BUS1_SCL = "2"
-  pw_app_common_I2C_BUS1_SDA = "3"
+  pw_app_common_I2C_BUS0_SCL = "9"
+  pw_app_common_I2C_BUS0_SDA = "8"
+  pw_app_common_I2C_BUS1_SCL = "3"
+  pw_app_common_I2C_BUS1_SDA = "2"
 }

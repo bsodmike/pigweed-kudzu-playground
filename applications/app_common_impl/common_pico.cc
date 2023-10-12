@@ -26,13 +26,16 @@
 #include "pw_digital_io_rp2040/digital_io.h"
 #include "pw_ft6236/device.h"
 #include "pw_i2c_rp2040/initiator.h"
+#include "pw_icm42670p/device.h"
 #include "pw_log/log.h"
+#include "pw_max17948/device.h"
 #include "pw_pixel_pusher_rp2040_pio/pixel_pusher.h"
 #include "pw_spi_rp2040/chip_selector.h"
 #include "pw_spi_rp2040/initiator.h"
 #include "pw_status/status.h"
 #include "pw_sync/borrow.h"
 #include "pw_sync/mutex.h"
+#include "pw_tca9535/device.h"
 #include "pw_thread/detached_thread.h"
 #include "pw_thread/thread.h"
 #include "pw_thread_freertos/context.h"
@@ -183,6 +186,30 @@ void SetBacklight(uint16_t brightness) {
 }
 #endif
 
+const uint8_t kStatusPinRed = 23;
+const uint8_t kStatusPinGreen = 24;
+const uint8_t kStatusPinBlue = 25;
+
+void ConfigStatusRgb() {
+  std::array<uint8_t, 3> pwm_pins = {
+      kStatusPinRed, kStatusPinGreen, kStatusPinBlue};
+  for (auto& pin : pwm_pins) {
+    gpio_set_function(pin, GPIO_FUNC_PWM);
+    auto slice_num = pwm_gpio_to_slice_num(pin);
+    pwm_config cfg = pwm_get_default_config();
+    pwm_set_wrap(slice_num, 65535);
+    pwm_init(slice_num, &cfg, true);
+
+    pwm_set_gpio_level(pin, 65535);
+  }
+}
+
+void SetStatusRgb(uint8_t r, uint8_t g, uint8_t b) {
+  pwm_set_gpio_level(kStatusPinRed, 65535 - r * r);
+  pwm_set_gpio_level(kStatusPinGreen, 65535 - g * g);
+  pwm_set_gpio_level(kStatusPinBlue, 65535 - b * b);
+}
+
 SpiValues::SpiValues(pw::spi::Config config,
                      pw::spi::ChipSelector& selector,
                      pw::sync::VirtualMutex& initiator_mutex)
@@ -205,6 +232,9 @@ constexpr pw::i2c::PicoInitiator::Config ki2c1Config{
 pw::i2c::PicoInitiator i2c0_bus(ki2c0Config);
 pw::i2c::PicoInitiator i2c1_bus(ki2c1Config);
 
+pw::tca9535::Device io_expander(i2c1_bus);
+pw::icm42670p::Device imu(i2c0_bus);
+pw::max17948::Device fuel_guage(i2c0_bus);
 pw::ft6236::Device touch_screen_controller(i2c0_bus);
 Touchscreen s_touchscreen = Touchscreen(&touch_screen_controller);
 
@@ -213,7 +243,28 @@ static pw::thread::freertos::StaticContextWithStack<
     kDisplayDrawThreadStackWords>
     display_draw_thread_context;
 
+Rp2040DigitalInOut s_io_reset_n(10);
+Rp2040DigitalInOut s_imu_fsync(13);
+
 }  // namespace
+
+Status Common::FrameCallback() {
+  // touch_screen_controller.LogControllerInfo();
+
+  if (io_expander.Probe() == pw::OkStatus()) {
+    io_expander.LogControllerInfo();
+  }
+
+  if (fuel_guage.Probe() == pw::OkStatus()) {
+    fuel_guage.LogControllerInfo();
+  }
+
+  if (imu.Probe() == pw::OkStatus()) {
+    imu.LogControllerInfo();
+  }
+
+  return pw::OkStatus();
+}
 
 // static
 Status Common::Init() {
@@ -223,6 +274,10 @@ Status Common::Init() {
   sleep_ms(10);
   set_sys_clock_khz(250000, false);
 #endif
+
+  ConfigStatusRgb();
+  // Set to a dim pink.
+  SetStatusRgb(32, 12, 32);
 
   s_display_cs_pin.Enable();
   s_display_dc_pin.Enable();
@@ -237,8 +292,31 @@ Status Common::Init() {
   i2c0_bus.Enable();
   i2c1_bus.Enable();
 
+  s_io_reset_n.Enable();
+  s_io_reset_n.SetStateActive();
+
+  s_imu_fsync.Enable();
+  s_imu_fsync.SetStateInactive();
+
   touch_screen_controller.Enable();
-  touch_screen_controller.LogControllerInfo();
+  if (touch_screen_controller.Probe() == pw::OkStatus()) {
+    touch_screen_controller.LogControllerInfo();
+  }
+
+  io_expander.Enable();
+  if (io_expander.Probe() == pw::OkStatus()) {
+    io_expander.LogControllerInfo();
+  }
+
+  fuel_guage.Enable();
+  if (fuel_guage.Probe() == pw::OkStatus()) {
+    fuel_guage.LogControllerInfo();
+  }
+
+  imu.Enable();
+  if (imu.Probe() == pw::OkStatus()) {
+    imu.LogControllerInfo();
+  }
 
 #if BACKLIGHT_GPIO != -1
   SetBacklight(0xffff);  // Full brightness.

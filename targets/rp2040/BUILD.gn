@@ -88,7 +88,7 @@ pw_system_target("rp2040") {
 
     # Kudzu pin assignments.
     pw_app_common_BACKLIGHT_GPIO = "15"
-    pw_app_common_DISPLAY_TE_GPIO = "21"
+    pw_app_common_DISPLAY_TE_GPIO = "16"
     pw_app_common_DISPLAY_CS_GPIO = "17"
     pw_app_common_DISPLAY_DC_GPIO = "20"
     pw_app_common_SPI_MOSI_GPIO = "19"
