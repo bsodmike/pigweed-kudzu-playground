@@ -10,30 +10,35 @@ pw build
 
 ## Run:
 
-### Host Build
+### Host
 
-Run either of the host build apps:
+Run the host app and connect to it via `pw-system-console`:
 
 ```sh
-./out/gn/host_debug/obj/applications/terminal_display/bin/terminal_demo
+./out/gn/host_device_simulator.speed_optimized/obj/applications/badge/bin/badge & \
+  pw-system-console --socket-addr default \
+    --proto-globs third_party/pigweed/pw_rpc/echo.proto ; \
+  killall badge
 ```
 
+### Kudzu
+
 ```sh
-./out/gn/host_debug/obj/applications/32blit_demo/bin/32blit_demo
+export ELF=./out/gn/rp2040.size_optimized/obj/applications/badge/bin/badge.elf
+
+picotool reboot -f -u && \
+  sleep 3 && \
+  picotool load -x $ELF
 ```
 
-### Flash a RP2040:
+Connect with `pw-system-console`:
 
 ```sh
-picotool reboot -f -u
-sleep 3
-picotool load -x ./out/gn/rp2040/obj/applications/terminal_display/terminal_demo.uf2
-```
-
-```sh
-picotool reboot -f -u
-sleep 3
-picotool load -x ./out/gn/rp2040/obj/applications/32blit_demo/32blit_demo.uf2
+pw-system-console --verbose \
+  --baudrate 115200 \
+  --proto-globs third_party/pigweed/pw_rpc/echo.proto \
+  --token-databases ./out/gn/rp2040.size_optimized/obj/applications/badge/bin/badge.elf \
+  --device /dev/rp2040
 ```
 
 ## Linux Setup

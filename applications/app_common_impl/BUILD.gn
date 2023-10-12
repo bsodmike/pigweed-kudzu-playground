@@ -223,7 +223,7 @@ pw_source_set("host_imgui") {
     "$dir_pw_framebuffer_pool",
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
-    "$dir_pw_touchscreen_null",
+    "$dir_pw_touchscreen_imgui",
     "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_host_imgui.cc" ]

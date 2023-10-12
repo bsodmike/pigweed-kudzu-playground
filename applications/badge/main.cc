@@ -194,15 +194,12 @@ void MainTask(void*) {
 
     if (touch_event.type == pw::touchscreen::TouchEventType::Start ||
         touch_event.type == pw::touchscreen::TouchEventType::Drag) {
-      pw::draw::DrawCircle(
-          framebuffer,
-          // TODO(tonymd): Touchscreen should understand how
-          // the screen is rotated.
-          round(((float)touch_event.point.y / 320.0) * 160.0),
-          round(((240.0 - (float)touch_event.point.x) / 240.0) * 120.0),
-          18,
-          colors_pico8_rgb565[COLOR_BLUE],
-          false);
+      pw::draw::DrawCircle(framebuffer,
+                           touch_event.point.x,
+                           touch_event.point.y,
+                           18,
+                           colors_pico8_rgb565[COLOR_BLUE],
+                           false);
     }
 
     // Update timers
@@ -215,7 +212,7 @@ void MainTask(void*) {
     frame_counter.EndFrame();
 
     if (pw::spin_delay::Millis() > frame_start_millis + 10000) {
-      Common::FrameCallback();
+      Common::EndOfFrameCallback();
       frame_start_millis = pw::spin_delay::Millis();
     }
   }

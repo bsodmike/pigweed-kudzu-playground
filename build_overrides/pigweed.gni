@@ -27,6 +27,8 @@ import("$dir_pigweed_experimental/modules.gni")
 declare_args() {
   # TODO(tonymd): rename these libararies to not start with "dir_"
   dir_pw_touchscreen = get_path_info("../lib/pw_touchscreen", "abspath")
+  dir_pw_touchscreen_imgui =
+      get_path_info("../lib/pw_touchscreen_imgui", "abspath")
   dir_pw_touchscreen_null =
       get_path_info("../lib/pw_touchscreen_null", "abspath")
   dir_pw_touchscreen_ft6236 =

@@ -28,7 +28,7 @@ class Common {
   // any other methods in this class.
   static pw::Status Init();
 
-  static pw::Status FrameCallback();
+  static pw::Status EndOfFrameCallback();
 
   // Return an initialized display.
   static pw::display::Display& GetDisplay();

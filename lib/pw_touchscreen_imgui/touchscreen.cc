@@ -12,52 +12,43 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "pw_touchscreen/touchscreen.h"
-
-#include <math.h>
+#include "pw_touchscreen_imgui/touchscreen.h"
 
 #include <cinttypes>
 
-#define PW_LOG_MODULE_NAME "pw_touchscreen_ft6236"
+#define PW_LOG_MODULE_NAME "pw_touchscreen_imgui"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
-#include "pw_ft6236/device.h"
+#include "pw_display_driver_imgui/display_driver.h"
 #include "pw_log/log.h"
 #include "pw_math/vector3.h"
-#include "pw_touchscreen_ft6236/touchscreen.h"
+#include "pw_status/status.h"
 
 namespace pw::touchscreen {
 
-TouchscreenFT6236::TouchscreenFT6236(
-    pw::ft6236::Device* touch_screen_controller)
-    : touch_screen_controller_(touch_screen_controller) {}
+TouchscreenImGui::TouchscreenImGui(
+    pw::display_driver::DisplayDriverImgUI& display_driver)
+    : display_driver_(display_driver) {}
 
-Status TouchscreenFT6236::Init() {
-  touch_screen_controller_->Enable();
-  touch_screen_controller_->LogControllerInfo();
-  return OkStatus();
+Status TouchscreenImGui::Init() { return OkStatus(); }
+
+bool TouchscreenImGui::Available() { return true; }
+
+bool TouchscreenImGui::NewTouchEvent() {
+  auto mouse = display_driver_.GetImGuiMousePosition();
+  return mouse.left_button_pressed;
 }
 
-bool TouchscreenFT6236::Available() { return true; }
-
-bool TouchscreenFT6236::NewTouchEvent() {
-  if (touch_screen_controller_->TouchCount() > 0) {
-    return true;
-  }
-  return false;
-}
-
-TouchEvent TouchscreenFT6236::GetTouchPoint() {
+TouchEvent TouchscreenImGui::GetTouchPoint() {
   TouchEvent event = {
       .type = TouchEventType::None,
       .point = {0, 0, 0},
   };
 
-  touch_screen_controller_->ReadData();
-  if (touch_screen_controller_->TouchCount() > 0) {
-    pw::ft6236::Touch touch_point1 = touch_screen_controller_->Touch1();
-    event.point.x = touch_point1.x;
-    event.point.y = touch_point1.y;
+  auto mouse = display_driver_.GetImGuiMousePosition();
+  if (mouse.left_button_pressed) {
+    event.point.x = mouse.position_x;
+    event.point.y = mouse.position_y;
     event.point.z = 1;
   }
 
@@ -76,16 +67,6 @@ TouchEvent TouchscreenFT6236::GetTouchPoint() {
   } else if (last_touch_event.point.z == 1 && event.point.z == 0) {
     event.type = TouchEventType::Stop;
     PW_LOG_DEBUG("Touch Stop");
-  }
-
-  // TODO(tonymd): Touchscreen should accept parameters on how to transform
-  // mouse to screen coordinates.
-  if (event.type == TouchEventType::Start ||
-      event.type == TouchEventType::Drag) {
-    int new_x = round(((float)event.point.y / 320.0) * 160.0);
-    int new_y = round(((240.0 - (float)event.point.x) / 240.0) * 120.0);
-    event.point.x = new_x;
-    event.point.y = new_y;
   }
 
   last_touch_event = event;

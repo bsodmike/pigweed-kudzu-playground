@@ -248,7 +248,7 @@ Rp2040DigitalInOut s_imu_fsync(13);
 
 }  // namespace
 
-Status Common::FrameCallback() {
+Status Common::EndOfFrameCallback() {
   // touch_screen_controller.LogControllerInfo();
 
   if (io_expander.Probe() == pw::OkStatus()) {
