@@ -21,8 +21,11 @@
 #include "app_common/common.h"
 #include "graphics/surface.hpp"
 #include "heart_8x8.h"
+#include "hello_my_name_is65x42.h"
+#include "kudzu_isometric_text_sprite.h"
 #include "libkudzu/framecounter.h"
 #include "libkudzu/random.h"
+#include "name_tag.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
 #include "pw_banner46x10.h"
@@ -59,9 +62,11 @@ constexpr float twopi = 2 * pi;
 constexpr float angle_step = twopi / 120;
 float angle = 0;
 
-// Draw the pigweed text banner.
+bool show_nametag = false;
+
+// Draw the a waving text banner.
 // Returns the bottom Y coordinate of the bottommost pixel set.
-int DrawBanner(Framebuffer& framebuffer) {
+void DrawTextBanner(Framebuffer& framebuffer) {
   constexpr std::array<std::wstring_view, 2> banner = {
       L"Hello World from KUDZU!",
   };
@@ -93,7 +98,7 @@ int DrawBanner(Framebuffer& framebuffer) {
 
       pw::draw::DrawCharacter(text_char,
                               position,
-                              pw::color::colors_pico8_rgb565[color_index + 8],
+                              colors_pico8_rgb565[color_index + 8],
                               0,
                               pw::draw::font6x8,
                               framebuffer);
@@ -117,8 +122,98 @@ int DrawBanner(Framebuffer& framebuffer) {
     tl.x = 0;
     tl.y += pw::draw::font6x8.height;
   }
+}
 
-  return tl.y - pw::draw::font6x8.height;
+void DrawKudzu(Framebuffer& framebuffer) {
+  Vector2<int> tl = {0, 16};
+
+  const float y_scale = 12.0;
+  const float x_scale = 1.0;
+  const float max_x_offset = 4.0;
+  const float max_y_offset = 16.0;
+
+  // X offsets between each letter
+  std::array<int, 5> x_offsets = {32, 22, 26, 30, 0};
+  // Original y offsets:
+  // std::array<int, 5> y_offsets = {14, 13, 13, 13, 0};
+  // y offsets / 2
+  std::array<int, 5> y_offsets = {7, 6, 6, 6, 0};
+
+  for (int column = 0; column < 5; column++) {
+    Vector2<int> position = {tl.x, tl.y};
+
+    float final_angle = angle + (y_scale * column * angle_step);
+    if (final_angle > twopi)
+      final_angle -= twopi;
+    if (final_angle < 0)
+      final_angle += twopi;
+
+    float offset_y = std::sin(final_angle);
+    float offset_x = std::cos(angle + (x_scale * column * angle_step));
+
+    position.x += round(max_x_offset * offset_x);
+    position.y += round(max_y_offset * offset_y);
+
+    pw::draw::DrawSprite(framebuffer,
+                         position.x,
+                         position.y,
+                         &kudzu_isometric_text_sprite_sprite_sheet,
+                         /*integer_scale*/ 1);
+    kudzu_isometric_text_sprite_sprite_sheet.RotateIndexLoop();
+    tl.x += x_offsets[column];
+    tl.y += y_offsets[column];
+  }
+}
+
+void DrawGreeting(Framebuffer& framebuffer, blit::Surface& screen) {
+  std::string text = "Nice to meet you\n Made with * by";
+  auto text_size = screen.measure_text(text, blit::minimal_font, true);
+  blit::Rect text_rect(blit::Point((screen.bounds.w / 2) - (text_size.w / 2),
+                                   (screen.bounds.h * .8) - (text_size.h / 2)),
+                       text_size);
+  screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
+  screen.text(
+      text, blit::minimal_font, text_rect, true, blit::TextAlign::top_left);
+
+  pw::draw::DrawSprite(framebuffer,
+                       text_rect.x + text_rect.w - 29,
+                       text_rect.y + text_rect.h - 9,
+                       &heart_8x8_sprite_sheet,
+                       1);
+  pw::draw::DrawSprite(framebuffer,
+                       text_rect.x + 10,
+                       text_rect.y + text_rect.h + 2,
+                       &pw_logo5x7_sprite_sheet,
+                       1);
+  pw::draw::DrawSprite(framebuffer,
+                       text_rect.x + 10 + 7,
+                       text_rect.y + text_rect.h,
+                       &pw_banner46x10_sprite_sheet,
+                       1);
+}
+
+void DrawNametag(Framebuffer& framebuffer, blit::Surface& screen) {
+  blit::Point tag_position(0, 0);
+  blit::Rect outer_tag_rect(tag_position, screen.bounds);
+
+  screen.pen = blit::Pen(0x4d, 0x00, 0xff);
+  screen.rectangle(outer_tag_rect);
+
+  pw::draw::DrawSprite(
+      framebuffer, 47, 6, &hello_my_name_is65x42_sprite_sheet, 1);
+
+  int name_rect_y_offset = hello_my_name_is65x42_sprite_sheet.height + 6 + 4;
+  tag_position += blit::Point(4, name_rect_y_offset);
+  blit::Size name_size(screen.bounds.w - 8,
+                       screen.bounds.h - name_rect_y_offset - 4);
+  PW_LOG_DEBUG("Tag size: %d, %d", name_size.w, name_size.h);
+
+  blit::Rect name_rect(tag_position, name_size);
+  screen.pen = blit::Pen(0xff, 0xff, 0xff);
+  screen.rectangle(name_rect);
+
+  pw::draw::DrawSprite(
+      framebuffer, tag_position.x, tag_position.y, &name_tag_sprite_sheet, 1);
 }
 
 void MainTask(void*) {
@@ -141,6 +236,7 @@ void MainTask(void*) {
   display.ReleaseFramebuffer(std::move(framebuffer));
 
   Touchscreen& touchscreen = Common::GetTouchscreen();
+  pw::touchscreen::TouchEvent last_touch_event;
 
   uint32_t frame_start_millis = pw::spin_delay::Millis();
   // The display loop.
@@ -163,34 +259,32 @@ void MainTask(void*) {
     screen.pen = blit::Pen(0, 0, 0);
     screen.clear();
 
-    // Draw animation
-    DrawBanner(framebuffer);
+    // Mode switch button
+    blit::Size button_size(48, 36);
+    blit::Point button_position(screen.bounds.w - button_size.w, 0);
+    blit::Rect mode_button_rect(button_position, button_size);
 
-    std::string text = "Nice to meet you\n Made with * by";
-    auto text_size = screen.measure_text(text, blit::minimal_font, true);
-    blit::Rect text_rect(
-        blit::Point((screen.bounds.w / 2) - (text_size.w / 2),
-                    (screen.bounds.h * .75) - (text_size.h / 2)),
-        text_size);
-    screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
-    screen.text(
-        text, blit::minimal_font, text_rect, true, blit::TextAlign::top_left);
+    if (show_nametag) {
+      DrawNametag(framebuffer, screen);
+      // Draw button
+      screen.pen = blit::Pen(255, 255, 255);
+      screen.text("kudzu!",
+                  blit::minimal_font,
+                  mode_button_rect,
+                  true,
+                  blit::TextAlign::top_right);
+    } else {
+      DrawKudzu(framebuffer);
+      DrawGreeting(framebuffer, screen);
 
-    pw::draw::DrawSprite(framebuffer,
-                         text_rect.x + text_rect.w - 29,
-                         text_rect.y + text_rect.h - 9,
-                         &heart_8x8_sprite_sheet,
-                         1);
-    pw::draw::DrawSprite(framebuffer,
-                         text_rect.x + 10,
-                         text_rect.y + text_rect.h + 2,
-                         &pw_logo5x7_sprite_sheet,
-                         1);
-    pw::draw::DrawSprite(framebuffer,
-                         text_rect.x + 10 + 7,
-                         text_rect.y + text_rect.h,
-                         &pw_banner46x10_sprite_sheet,
-                         1);
+      // Draw button
+      screen.pen = blit::Pen(255, 0, 255);
+      screen.text("hello!",
+                  blit::minimal_font,
+                  mode_button_rect,
+                  true,
+                  blit::TextAlign::top_right);
+    }
 
     if (touch_event.type == pw::touchscreen::TouchEventType::Start ||
         touch_event.type == pw::touchscreen::TouchEventType::Drag) {
@@ -201,6 +295,18 @@ void MainTask(void*) {
                            colors_pico8_rgb565[COLOR_BLUE],
                            false);
     }
+    if (last_touch_event.type == pw::touchscreen::TouchEventType::Drag &&
+        touch_event.type == pw::touchscreen::TouchEventType::Stop) {
+      PW_LOG_DEBUG("Touch Stop at: %d, %d",
+                   last_touch_event.point.x,
+                   last_touch_event.point.y);
+      if (mode_button_rect.contains(blit::Point(last_touch_event.point.x,
+                                                last_touch_event.point.y))) {
+        show_nametag = !show_nametag;
+      }
+    }
+
+    last_touch_event = touch_event;
 
     // Update timers
     frame_counter.EndDraw();

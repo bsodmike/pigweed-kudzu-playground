@@ -26,7 +26,10 @@ group("all") {
 pw_executable("badge") {
   sources = [
     "heart_8x8.h",
+    "hello_my_name_is65x42.h",
+    "kudzu_isometric_text_sprite.h",
     "main.cc",
+    "name_tag.h",
     "pw_banner46x10.h",
     "pw_logo5x7.h",
   ]

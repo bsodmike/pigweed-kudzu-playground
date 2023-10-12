@@ -75,7 +75,10 @@ TouchEvent TouchscreenFT6236::GetTouchPoint() {
                  event.point.z);
   } else if (last_touch_event.point.z == 1 && event.point.z == 0) {
     event.type = TouchEventType::Stop;
-    PW_LOG_DEBUG("Touch Stop");
+    PW_LOG_DEBUG("Touch Stop : x:%d, y:%d, z:%d",
+                 event.point.x,
+                 event.point.y,
+                 event.point.z);
   }
 
   // TODO(tonymd): Touchscreen should accept parameters on how to transform
