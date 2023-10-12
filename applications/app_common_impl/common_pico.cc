@@ -37,6 +37,7 @@
 #include "pw_thread/thread.h"
 #include "pw_thread_freertos/context.h"
 #include "pw_thread_freertos/options.h"
+#include "pw_touchscreen_ft6236/touchscreen.h"
 
 #if defined(DISPLAY_TYPE_ILI9341)
 #include "pw_display_driver_ili9341/display_driver.h"
@@ -53,6 +54,8 @@ using DisplayDriver = pw::display_driver::DisplayDriverST7789;
 #else
 #error "Undefined display type"
 #endif
+
+using Touchscreen = pw::touchscreen::TouchscreenFT6236;
 
 using pw::Status;
 using pw::digital_io::Rp2040DigitalIn;
@@ -187,17 +190,27 @@ SpiValues::SpiValues(pw::spi::Config config,
       borrowable_initiator(initiator, initiator_mutex),
       device(borrowable_initiator, config, selector) {}
 
-constexpr pw::i2c::PicoInitiator::Config ki2cConfig{
+constexpr pw::i2c::PicoInitiator::Config ki2c0Config{
     .i2c_block = 0,
     .baud_rate_bps = 400'000,
-    .sda_pin = 8,
-    .scl_pin = 9,
+    .sda_pin = I2C_BUS0_SDA,
+    .scl_pin = I2C_BUS0_SCL,
 };
+constexpr pw::i2c::PicoInitiator::Config ki2c1Config{
+    .i2c_block = 1,
+    .baud_rate_bps = 400'000,
+    .sda_pin = I2C_BUS1_SDA,
+    .scl_pin = I2C_BUS1_SCL,
+};
+pw::i2c::PicoInitiator i2c0_bus(ki2c0Config);
+pw::i2c::PicoInitiator i2c1_bus(ki2c1Config);
 
-pw::i2c::PicoInitiator i2c_bus(ki2cConfig);
+pw::ft6236::Device touch_screen_controller(i2c0_bus);
+Touchscreen s_touchscreen = Touchscreen(&touch_screen_controller);
 
 static constexpr size_t kDisplayDrawThreadStackWords = 512;
-static pw::thread::freertos::StaticContextWithStack<kDisplayDrawThreadStackWords>
+static pw::thread::freertos::StaticContextWithStack<
+    kDisplayDrawThreadStackWords>
     display_draw_thread_context;
 
 }  // namespace
@@ -221,11 +234,11 @@ Status Common::Init() {
   s_display_tear_effect_pin.Enable();
 #endif
 
-  i2c_bus.Enable();
+  i2c0_bus.Enable();
+  i2c1_bus.Enable();
 
-  pw::ft6236::Device touch_screen(i2c_bus);
-  touch_screen.Enable();
-  touch_screen.LogControllerInfo();
+  touch_screen_controller.Enable();
+  touch_screen_controller.LogControllerInfo();
 
 #if BACKLIGHT_GPIO != -1
   SetBacklight(0xffff);  // Full brightness.
@@ -253,6 +266,8 @@ Status Common::Init() {
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static constexpr auto options =

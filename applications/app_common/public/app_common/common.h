@@ -16,6 +16,7 @@
 #include "pw_display/display.h"
 #include "pw_status/status.h"
 #include "pw_thread/thread.h"
+#include "pw_touchscreen/touchscreen.h"
 
 // This class is used for initialization and to create the objects which
 // are common to the test applications.
@@ -29,6 +30,9 @@ class Common {
 
   // Return an initialized display.
   static pw::display::Display& GetDisplay();
+
+  // Return an initialized touchscreen.
+  static pw::touchscreen::Touchscreen& GetTouchscreen();
 
   // Provides thread options for the display thread.
   static const pw::thread::Options& DisplayDrawThreadOptions();

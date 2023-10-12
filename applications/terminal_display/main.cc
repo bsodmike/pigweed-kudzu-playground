@@ -403,9 +403,6 @@ void MainTask(void*) {
 
   pw::draw::Fill(framebuffer, kBlack);
 
-  PW_LOG_INFO("pw::touchscreen::Init()");
-  pw::touchscreen::Init();
-
   pw::math::Vector3<int> last_frame_touch_state(0, 0, 0);
 
   DrawFrame(framebuffer);
@@ -415,29 +412,6 @@ void MainTask(void*) {
   // The display loop.
   while (1) {
     frame_counter.StartFrame();
-    // // pw::math::Vector3<int> point = display.GetTouchPoint();
-    // pw::math::Vector3<int> point = pw::touchscreen::GetTouchPoint();
-    // // Check for touchscreen events.
-    // // if (display.TouchscreenAvailable() && display.NewTouchEvent()) {
-    // if (pw::touchscreen::Available() && pw::touchscreen::NewTouchEvent()) {
-    //   if (point.z > 0) {
-    //     bool button_just_pressed = false;
-    //     if (point.z != last_frame_touch_state.z)
-    //       button_just_pressed = true;
-    //     // New touch event
-    //     Vector2<int> touch_location{point.x, point.y};
-
-    //     PW_LOG_DEBUG("Touch: x:%d, y:%d, z:%d", point.x, point.y, point.z);
-
-    //     // If a button was just pressed, call CreateDemoLogMessages.
-    //     if (button_just_pressed && g_button.Contains(touch_location)) {
-    //       CreateDemoLogMessages();
-    //     }
-    //   }
-    // }
-    // last_frame_touch_state.x = point.x;
-    // last_frame_touch_state.y = point.y;
-    // last_frame_touch_state.z = point.z;
 
     framebuffer = display.GetFramebuffer();
     PW_ASSERT(framebuffer.is_valid());

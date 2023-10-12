@@ -17,6 +17,7 @@
 #include "pw_status/try.h"
 #include "pw_thread/thread.h"
 #include "pw_thread_stl/options.h"
+#include "pw_touchscreen_null/touchscreen.h"
 
 using pw::Status;
 using pw::framebuffer::PixelFormat;
@@ -36,6 +37,8 @@ pw::framebuffer_pool::FramebufferPool s_fb_pool({
     .pixel_format = PixelFormat::None,
 });
 pw::display::Display s_display(s_display_driver, kDisplaySize, s_fb_pool);
+pw::touchscreen::TouchscreenNull s_touchscreen =
+    pw::touchscreen::TouchscreenNull();
 
 }  // namespace
 
@@ -44,6 +47,8 @@ Status Common::Init() { return s_display_driver.Init(); }
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static pw::thread::stl::Options display_draw_thread_options;

@@ -66,13 +66,21 @@ config("rp2040_pio_flags") {
   ]
 }
 
+config("rp2040_i2c_flags") {
+  cflags = [
+    "-DI2C_BUS0_SCL=" + pw_app_common_I2C_BUS0_SCL,
+    "-DI2C_BUS0_SDA=" + pw_app_common_I2C_BUS0_SDA,
+    "-DI2C_BUS1_SCL=" + pw_app_common_I2C_BUS1_SCL,
+    "-DI2C_BUS1_SDA=" + pw_app_common_I2C_BUS1_SDA,
+  ]
+}
+
 pw_source_set("stm32cube") {
   public_configs = [
     ":common_flags",
     ":spi_stm32_flags",
   ]
   deps = [
-    "//applications/app_common:app_common.facade",
     "$dir_pw_digital_io_stm32cube",
     "$dir_pw_display",
     "$dir_pw_display_driver_ili9341",
@@ -80,14 +88,15 @@ pw_source_set("stm32cube") {
     "$dir_pw_spi_stm32cube",
     "$dir_pw_sync:borrow",
     "$dir_pw_sync:mutex",
+    "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_stm32cube.cc" ]
 }
 
 pw_source_set("stm32") {
   deps = [
-    "//applications/app_common:app_common.facade",
     "$dir_pw_display_driver_null",
+    "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_stm32.cc" ]
 }
@@ -98,7 +107,6 @@ pw_source_set("arduino") {
     ":spi_flags",
   ]
   deps = [
-    "//applications/app_common:app_common.facade",
     "$dir_pw_digital_io_arduino",
     "$dir_pw_display",
     "$dir_pw_display_driver_ili9341",
@@ -106,6 +114,7 @@ pw_source_set("arduino") {
     "$dir_pw_sync:borrow",
     "$dir_pw_sync:mutex",
     "$dir_pw_third_party/arduino:arduino_core_sources",
+    "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_arduino.cc" ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
@@ -115,12 +124,12 @@ if (pw_third_party_mcuxpresso_SDK != "") {
   pw_source_set("mimxrt595") {
     public_configs = [ ":common_flags" ]
     deps = [
-      "//applications/app_common:app_common.facade",
       "$dir_pw_display",
       "$dir_pw_display_driver_mipi_dsi",
       "$dir_pw_framebuffer_pool_mcuxpresso",
       "$dir_pw_mipi_dsi_mcuxpresso",
       "$pw_third_party_mcuxpresso_SDK",
+      "//applications/app_common:app_common.facade",
     ]
     sources = [ "common_mimxrt595.cc" ]
   }
@@ -132,7 +141,6 @@ _pico_common_deps = [
   "$PICO_ROOT/src/rp2_common/hardware_pwm",
   "$PICO_ROOT/src/rp2_common/hardware_spi",
   "$PICO_ROOT/src/rp2_common/hardware_vreg",
-  "//applications/app_common:app_common.facade",
   "$dir_pw_digital_io_rp2040",
   "$dir_pw_display",
   "$dir_pw_framebuffer_pool",
@@ -144,12 +152,14 @@ _pico_common_deps = [
   "$dir_pw_sync:mutex",
   "$dir_pw_thread:thread",
   "$dir_pw_thread_freertos:thread",
+  "//applications/app_common:app_common.facade",
 ]
 
 pw_source_set("pico_ili9341") {
   public_configs = [
     ":common_flags",
     ":spi_flags",
+    ":rp2040_i2c_flags",
   ]
   cflags = [ "-DDISPLAY_TYPE_ILI9341" ]
   deps = _pico_common_deps
@@ -162,6 +172,7 @@ pw_source_set("pico_st7789") {
   public_configs = [
     ":common_flags",
     ":spi_flags",
+    ":rp2040_i2c_flags",
   ]
   cflags = [ "-DDISPLAY_TYPE_ST7789" ]
   deps = _pico_common_deps
@@ -175,12 +186,14 @@ pw_source_set("pico_st7789_pio") {
     ":common_flags",
     ":spi_flags",
     ":rp2040_pio_flags",
+    ":rp2040_i2c_flags",
   ]
   cflags = [ "-DDISPLAY_TYPE_ST7789_PIO" ]
   deps = _pico_common_deps
   deps += [
     "$dir_pw_display_driver_st7789",
     "$dir_pw_pixel_pusher_rp2040_pio",
+    "$dir_pw_touchscreen_ft6236",
   ]
   sources = [ "common_pico.cc" ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
@@ -190,6 +203,7 @@ pw_source_set("pico_st7735") {
   public_configs = [
     ":common_flags",
     ":spi_flags",
+    ":rp2040_i2c_flags",
   ]
   cflags = [ "-DDISPLAY_TYPE_ST7735" ]
   deps = _pico_common_deps
@@ -201,12 +215,13 @@ pw_source_set("pico_st7735") {
 pw_source_set("host_imgui") {
   public_configs = [ ":common_flags" ]
   deps = [
-    "//applications/app_common:app_common.facade",
     "$dir_pw_display_driver_imgui",
     "$dir_pw_display_imgui",
     "$dir_pw_framebuffer_pool",
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
+    "$dir_pw_touchscreen_null",
+    "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_host_imgui.cc" ]
   remove_configs = []
@@ -218,11 +233,12 @@ pw_source_set("host_imgui") {
 pw_source_set("host_null") {
   public_configs = [ ":common_flags" ]
   deps = [
-    "//applications/app_common:app_common.facade",
     "$dir_pw_display",
     "$dir_pw_display_driver_null",
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
+    "$dir_pw_touchscreen_null",
+    "//applications/app_common:app_common.facade",
   ]
   sources = [ "common_host_null.cc" ]
 }

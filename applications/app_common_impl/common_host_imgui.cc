@@ -19,11 +19,14 @@
 #include "pw_status/try.h"
 #include "pw_thread/thread.h"
 #include "pw_thread_stl/options.h"
+#include "pw_touchscreen_null/touchscreen.h"
 
 using pw::Status;
 using pw::color::color_rgb565_t;
 using pw::framebuffer::PixelFormat;
 using pw::framebuffer_pool::FramebufferPool;
+
+using Touchscreen = pw::touchscreen::TouchscreenNull;
 
 namespace {
 
@@ -49,6 +52,7 @@ FramebufferPool s_fb_pool({
 });
 pw::display_driver::DisplayDriverImgUI s_display_driver;
 pw::display::DisplayImgUI s_display(s_display_driver, kDisplaySize, s_fb_pool);
+Touchscreen s_touchscreen = Touchscreen();
 
 }  // namespace
 
@@ -57,6 +61,8 @@ Status Common::Init() { return s_display_driver.Init(); }
 
 // static
 pw::display::Display& Common::GetDisplay() { return s_display; }
+
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static pw::thread::stl::Options display_draw_thread_options;

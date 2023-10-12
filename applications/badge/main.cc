@@ -15,6 +15,7 @@
 
 #include "pw_banner46x10.h"
 
+#define PW_LOG_MODULE_NAME "Badge"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "app_common/common.h"
@@ -41,6 +42,7 @@
 #include "pw_system/target_hooks.h"
 #include "pw_system/work_queue.h"
 #include "pw_thread/detached_thread.h"
+#include "pw_touchscreen/touchscreen.h"
 
 using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
@@ -48,6 +50,7 @@ using pw::display::Display;
 using pw::framebuffer::Framebuffer;
 using pw::math::Size;
 using pw::math::Vector2;
+using pw::touchscreen::Touchscreen;
 
 namespace {
 
@@ -137,6 +140,8 @@ void MainTask(void*) {
 
   display.ReleaseFramebuffer(std::move(framebuffer));
 
+  Touchscreen& touchscreen = Common::GetTouchscreen();
+
   // The display loop.
   while (1) {
     frame_counter.StartFrame();
@@ -145,6 +150,8 @@ void MainTask(void*) {
     if (angle >= twopi) {
       angle = 0;
     }
+
+    pw::touchscreen::TouchEvent touch_event = touchscreen.GetTouchPoint();
 
     framebuffer = display.GetFramebuffer();
     PW_ASSERT(framebuffer.is_valid());
@@ -183,6 +190,19 @@ void MainTask(void*) {
                          text_rect.y + text_rect.h,
                          &pw_banner46x10_sprite_sheet,
                          1);
+
+    if (touch_event.type == pw::touchscreen::TouchEventType::Start ||
+        touch_event.type == pw::touchscreen::TouchEventType::Drag) {
+      pw::draw::DrawCircle(
+          framebuffer,
+          // TODO(tonymd): Touchscreen should understand how
+          // the screen is rotated.
+          round(((float)touch_event.point.y / 320.0) * 160.0),
+          round(((240.0 - (float)touch_event.point.x) / 240.0) * 120.0),
+          18,
+          colors_pico8_rgb565[COLOR_BLUE],
+          false);
+    }
 
     // Update timers
     frame_counter.EndDraw();
