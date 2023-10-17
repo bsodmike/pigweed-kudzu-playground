@@ -155,25 +155,24 @@ pw::framebuffer_pool::FramebufferPool s_fb_pool({
     .pixel_format = PixelFormat::RGB565,
 });
 DisplayDriver s_display_driver({
-  .data_cmd_gpio = s_display_dc_pin.as<pw::digital_io::DigitalOut>(),
-  .spi_cs_gpio = s_display_cs_pin.as<pw::digital_io::DigitalOut>(),
+    .data_cmd_gpio = s_display_dc_pin.as<pw::digital_io::DigitalOut>(),
+    .spi_cs_gpio = s_display_cs_pin.as<pw::digital_io::DigitalOut>(),
 #if DISPLAY_RESET_GPIO != -1
-  .reset_gpio = &s_display_reset_pin.as<pw::digital_io::DigitalOut>(),
+    .reset_gpio = &s_display_reset_pin.as<pw::digital_io::DigitalOut>(),
 #else
-  .reset_gpio = nullptr,
+    .reset_gpio = nullptr,
 #endif
 #if DISPLAY_TE_GPIO != -1
-  .tear_effect_gpio = &s_display_tear_effect_pin,
+    .tear_effect_gpio = &s_display_tear_effect_pin,
 #else
-  .tear_effect_gpio = nullptr,
+    .tear_effect_gpio = nullptr,
 #endif
-  .spi_device_8_bit = s_spi_8_bit.device,
-  .spi_device_16_bit = s_spi_16_bit.device,
+    .spi_device_8_bit = s_spi_8_bit.device,
+    .spi_device_16_bit = s_spi_16_bit.device,
 #if USE_PIO
-  .pixel_pusher = &s_pixel_pusher,
+    .pixel_pusher = &s_pixel_pusher,
 #endif
 });
-Display s_display(s_display_driver, kDisplaySize, s_fb_pool);
 
 #if BACKLIGHT_GPIO != -1
 void SetBacklight(uint16_t brightness) {
@@ -236,7 +235,6 @@ pw::tca9535::Device io_expander(i2c1_bus);
 pw::icm42670p::Device imu(i2c0_bus);
 pw::max17948::Device fuel_guage(i2c0_bus);
 pw::ft6236::Device touch_screen_controller(i2c0_bus);
-Touchscreen s_touchscreen = Touchscreen(&touch_screen_controller);
 
 static constexpr size_t kDisplayDrawThreadStackWords = 512;
 static pw::thread::freertos::StaticContextWithStack<
@@ -343,9 +341,15 @@ Status Common::Init() {
 }
 
 // static
-pw::display::Display& Common::GetDisplay() { return s_display; }
+pw::display::Display& Common::GetDisplay() {
+  static Display s_display(s_display_driver, kDisplaySize, s_fb_pool);
+  return s_display;
+}
 
-pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
+  static Touchscreen s_touchscreen = Touchscreen(&touch_screen_controller);
+  return s_touchscreen;
+}
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static constexpr auto options =

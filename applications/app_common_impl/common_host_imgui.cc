@@ -51,8 +51,6 @@ FramebufferPool s_fb_pool({
     .pixel_format = PixelFormat::RGB565,
 });
 pw::display_driver::DisplayDriverImgUI s_display_driver;
-pw::display::DisplayImgUI s_display(s_display_driver, kDisplaySize, s_fb_pool);
-Touchscreen s_touchscreen = Touchscreen(s_display_driver);
 
 }  // namespace
 
@@ -62,9 +60,16 @@ Status Common::EndOfFrameCallback() { return pw::OkStatus(); }
 Status Common::Init() { return s_display_driver.Init(); }
 
 // static
-pw::display::Display& Common::GetDisplay() { return s_display; }
+pw::display::Display& Common::GetDisplay() {
+  static pw::display::DisplayImgUI s_display(
+      s_display_driver, kDisplaySize, s_fb_pool);
+  return s_display;
+}
 
-pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
+  static Touchscreen s_touchscreen = Touchscreen(s_display_driver);
+  return s_touchscreen;
+}
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static pw::thread::stl::Options display_draw_thread_options;

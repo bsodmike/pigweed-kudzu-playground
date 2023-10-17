@@ -36,9 +36,6 @@ pw::framebuffer_pool::FramebufferPool s_fb_pool({
     .row_bytes = 0,
     .pixel_format = PixelFormat::None,
 });
-pw::display::Display s_display(s_display_driver, kDisplaySize, s_fb_pool);
-pw::touchscreen::TouchscreenNull s_touchscreen =
-    pw::touchscreen::TouchscreenNull();
 
 }  // namespace
 
@@ -46,9 +43,17 @@ pw::touchscreen::TouchscreenNull s_touchscreen =
 Status Common::Init() { return s_display_driver.Init(); }
 
 // static
-pw::display::Display& Common::GetDisplay() { return s_display; }
+pw::display::Display& Common::GetDisplay() {
+  static pw::display::Display s_display(
+      s_display_driver, kDisplaySize, s_fb_pool);
+  return s_display;
+}
 
-pw::touchscreen::Touchscreen& Common::GetTouchscreen() { return s_touchscreen; }
+pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
+  static pw::touchscreen::TouchscreenNull s_touchscreen =
+      pw::touchscreen::TouchscreenNull();
+  return s_touchscreen;
+}
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static pw::thread::stl::Options display_draw_thread_options;
