@@ -11,23 +11,25 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-
+import("//build_overrides/pi_pico.gni")
 import("//build_overrides/pigweed.gni")
-
 import("$dir_pw_build/target_types.gni")
 
 config("default_config") {
   include_dirs = [ "public" ]
 }
 
-pw_source_set("pw_touchscreen_ft6236") {
+pw_source_set("pw_ft6236") {
   public_configs = [ ":default_config" ]
-  public = [ "public/pw_touchscreen_ft6236/touchscreen.h" ]
-  deps = [
-    "$dir_pw_log",
-    "$dir_pw_result",
-    "$dir_pw_touchscreen:pw_touchscreen",
-    "//lib/pw_ft6236",
+  public_deps = [
+    "$dir_pw_i2c:initiator",
+    "$dir_pw_status",
   ]
-  sources = [ "touchscreen.cc" ]
+  deps = [
+    "$dir_pw_digital_io",
+    "$dir_pw_i2c:register_device",
+    "$dir_pw_log",
+  ]
+  sources = [ "device.cc" ]
+  remove_configs = [ "$dir_pw_build:strict_warnings" ]
 }

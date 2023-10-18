@@ -144,7 +144,6 @@ _pico_common_deps = [
   "$dir_pw_digital_io_rp2040",
   "$dir_pw_display",
   "$dir_pw_framebuffer_pool",
-  "$dir_pw_ft6236",
   "$dir_pw_i2c_rp2040",
   "$dir_pw_icm42670p",
   "$dir_pw_log",
@@ -156,6 +155,7 @@ _pico_common_deps = [
   "$dir_pw_thread:thread",
   "$dir_pw_thread_freertos:thread",
   "//applications/app_common:app_common.facade",
+  "//lib/pw_ft6236",
 ]
 
 pw_source_set("pico_ili9341") {

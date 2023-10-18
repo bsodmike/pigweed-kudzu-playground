@@ -53,7 +53,11 @@ TouchEvent TouchscreenFT6236::GetTouchPoint() {
       .point = {0, 0, 0},
   };
 
-  touch_screen_controller_->ReadData();
+  Result<bool> read_result = touch_screen_controller_->ReadData();
+  if (!read_result.ok()) {
+    return event;
+  }
+
   if (touch_screen_controller_->TouchCount() > 0) {
     pw::ft6236::Touch touch_point1 = touch_screen_controller_->Touch1();
     event.point.x = touch_point1.x;
