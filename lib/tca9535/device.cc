@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "pw_max17948/device.h"
+#include "tca9535/device.h"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 
-#define PW_LOG_MODULE_NAME "pw_max17948"
+#define PW_LOG_MODULE_NAME "tca9535"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_bytes/bit.h"
@@ -30,24 +30,11 @@
 using ::pw::Status;
 using namespace std::chrono_literals;
 
-namespace pw::max17948 {
+namespace pw::tca9535 {
 
 namespace {
 
-constexpr pw::i2c::Address kAddress = pw::i2c::Address::SevenBit<0x36>();
-
-void FuelReadReg(pw::i2c::RegisterDevice& device,
-                 uint8_t addr,
-                 const char* name) {
-  auto data =
-      device.ReadRegister16(addr, pw::chrono::SystemClock::for_at_least(10ms));
-
-  if (data.ok()) {
-    PW_LOG_INFO("%s: %04x", name, *data);
-  } else {
-    PW_LOG_INFO("failed to read %s", name);
-  }
-}
+constexpr pw::i2c::Address kAddress = pw::i2c::Address::SevenBit<0x20>();
 
 }  // namespace
 
@@ -59,8 +46,14 @@ Device::Device(pw::i2c::Initiator& initiator)
               pw::i2c::RegisterAddressSize::k1Byte) {}
 
 Status Device::Enable() {
+  // Port 0 is all button input.
   device_.WriteRegister8(
-      0x1f, 0x0f, pw::chrono::SystemClock::for_at_least(10ms));
+      0x6, 0xff, pw::chrono::SystemClock::for_at_least(10ms));
+  // Port 1 pins 6 and 7 are DISP_RESET and TOUCH_RESET which should be high.
+  device_.WriteRegister8(
+      0x3, 0xff, pw::chrono::SystemClock::for_at_least(10ms));
+  device_.WriteRegister8(
+      0x7, 0x3f, pw::chrono::SystemClock::for_at_least(10ms));
 
   return OkStatus();
 }
@@ -70,30 +63,29 @@ Status Device::Probe() {
       kAddress, pw::chrono::SystemClock::for_at_least(10ms)));
 
   if (probe_result != pw::OkStatus()) {
-    PW_LOG_DEBUG("MAX17948 Probe Failed");
+    PW_LOG_DEBUG("TCA9535 Probe Failed");
   } else {
-    PW_LOG_DEBUG("MAX17948 Probe Ok");
+    PW_LOG_DEBUG("TCA9535 Probe Ok");
   }
   return probe_result;
 }
 
 void Device::LogControllerInfo() {
-  auto data =
-      device_.ReadRegister16(0x2, pw::chrono::SystemClock::for_at_least(10ms));
-  if (data.ok()) {
-    PW_LOG_INFO("VCELL: %d mV", static_cast<uint32_t>(*data) * 78125 / 1000000);
+  auto port0 =
+      device_.ReadRegister8(0x0, pw::chrono::SystemClock::for_at_least(10ms));
+  if (port0.ok()) {
+    PW_LOG_INFO("port 0: %02x", *port0);
   } else {
-    PW_LOG_INFO("failed to read VCELL");
+    PW_LOG_INFO("port 0 read failed");
   }
-  FuelReadReg(device_, 0x4, "SOC");
-  FuelReadReg(device_, 0x6, "MODE");
-  FuelReadReg(device_, 0x8, "VERSION");
-  FuelReadReg(device_, 0xa, "HIBRT");
-  FuelReadReg(device_, 0xc, "CONFIG");
-  FuelReadReg(device_, 0x14, "VALRT");
-  FuelReadReg(device_, 0x16, "CRATE");
-  FuelReadReg(device_, 0x18, "VRESET/ID");
-  FuelReadReg(device_, 0x1a, "STATUS");
+
+  auto port1 =
+      device_.ReadRegister8(0x1, pw::chrono::SystemClock::for_at_least(10ms));
+  if (port1.ok()) {
+    PW_LOG_INFO("port 1: %02x", *port1);
+  } else {
+    PW_LOG_INFO("port 1 read failed");
+  }
 }
 
-}  // namespace pw::max17948
+}  // namespace pw::tca9535

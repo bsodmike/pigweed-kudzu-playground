@@ -29,7 +29,7 @@ pw_source_set("pw_touchscreen_imgui") {
     "$dir_pw_display_driver_imgui",
     "$dir_pw_log",
     "$dir_pw_result",
-    "$dir_pw_touchscreen:pw_touchscreen",
+    "//lib/pw_touchscreen:pw_touchscreen",
   ]
   sources = [ "touchscreen.cc" ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]

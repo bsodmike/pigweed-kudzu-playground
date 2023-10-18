@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "pw_ft6236/device.h"
+#include "ft6236/device.h"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 
-#define PW_LOG_MODULE_NAME "pw_ft6236"
+#define PW_LOG_MODULE_NAME "ft6236"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_bytes/bit.h"

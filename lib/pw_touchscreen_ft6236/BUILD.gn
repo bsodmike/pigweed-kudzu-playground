@@ -26,8 +26,8 @@ pw_source_set("pw_touchscreen_ft6236") {
   deps = [
     "$dir_pw_log",
     "$dir_pw_result",
-    "$dir_pw_touchscreen:pw_touchscreen",
-    "//lib/pw_ft6236",
+    "//lib/ft6236",
+    "//lib/pw_touchscreen:pw_touchscreen",
   ]
   sources = [ "touchscreen.cc" ]
 }

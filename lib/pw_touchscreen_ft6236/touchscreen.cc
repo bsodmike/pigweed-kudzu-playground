@@ -21,7 +21,7 @@
 #define PW_LOG_MODULE_NAME "pw_touchscreen_ft6236"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
-#include "pw_ft6236/device.h"
+#include "ft6236/device.h"
 #include "pw_log/log.h"
 #include "pw_math/vector3.h"
 #include "pw_touchscreen_ft6236/touchscreen.h"

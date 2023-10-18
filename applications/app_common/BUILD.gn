@@ -30,7 +30,7 @@ pw_facade("app_common") {
     "$dir_pw_display",
     "$dir_pw_status",
     "$dir_pw_thread:thread",
-    "$dir_pw_touchscreen",
+    "//lib/pw_touchscreen",
   ]
   public = [ "public/app_common/common.h" ]
 }

@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "pw_icm42670p/device.h"
+#include "icm42670p/device.h"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 
-#define PW_LOG_MODULE_NAME "pw_icm42670p"
+#define PW_LOG_MODULE_NAME "icm42670p"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_bytes/bit.h"

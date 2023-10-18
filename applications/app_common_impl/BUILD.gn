@@ -16,7 +16,6 @@ import("//build_overrides/pi_pico.gni")
 import("//build_overrides/pigweed.gni")
 import("$dir_pigweed_experimental/third_party/imgui/imgui.gni")
 import("$dir_pw_build/target_types.gni")
-import("$dir_pw_third_party/mcuxpresso/mcuxpresso.gni")
 import("app_common_vars.gni")
 
 config("common_flags") {
@@ -42,22 +41,6 @@ config("spi_flags") {
   ]
 }
 
-# STM32 uses a macro to concatenate two strings to create a new constant that
-# is from the SDK. These "LCD*" constants are substrings in those SDK constants
-# and therefore must have specific names.
-config("spi_stm32_flags") {
-  cflags = [
-    "-DSPI_MISO_GPIO=" + pw_app_common_SPI_MISO_GPIO,
-    "-DSPI_MOSI_GPIO=" + pw_app_common_SPI_MOSI_GPIO,
-    "-DSPI_CLOCK_GPIO=" + pw_app_common_SPI_CLOCK_GPIO,
-    "-DLCD_CS_PORT_CHAR=" + pw_app_common_STM32_DISPLAY_CS_PORT,
-    "-DLCD_CS_PIN_NUM=" + pw_app_common_DISPLAY_CS_GPIO,
-    "-DLCD_DC_PORT_CHAR=" + pw_app_common_STM32_DISPLAY_DC_PORT,
-    "-DLCD_DC_PIN_NUM=" + pw_app_common_DISPLAY_DC_GPIO,
-    "-DLCD_RST_PIN_NUM=" + pw_app_common_DISPLAY_RESET_GPIO,
-  ]
-}
-
 config("rp2040_pio_flags") {
   cflags = [
     "-DUSE_PIO=1",
@@ -75,66 +58,6 @@ config("rp2040_i2c_flags") {
   ]
 }
 
-pw_source_set("stm32cube") {
-  public_configs = [
-    ":common_flags",
-    ":spi_stm32_flags",
-  ]
-  deps = [
-    "$dir_pw_digital_io_stm32cube",
-    "$dir_pw_display",
-    "$dir_pw_display_driver_ili9341",
-    "$dir_pw_framebuffer_pool",
-    "$dir_pw_spi_stm32cube",
-    "$dir_pw_sync:borrow",
-    "$dir_pw_sync:mutex",
-    "//applications/app_common:app_common.facade",
-  ]
-  sources = [ "common_stm32cube.cc" ]
-}
-
-pw_source_set("stm32") {
-  deps = [
-    "$dir_pw_display_driver_null",
-    "//applications/app_common:app_common.facade",
-  ]
-  sources = [ "common_stm32.cc" ]
-}
-
-pw_source_set("arduino") {
-  public_configs = [
-    ":common_flags",
-    ":spi_flags",
-  ]
-  deps = [
-    "$dir_pw_digital_io_arduino",
-    "$dir_pw_display",
-    "$dir_pw_display_driver_ili9341",
-    "$dir_pw_spi_arduino",
-    "$dir_pw_sync:borrow",
-    "$dir_pw_sync:mutex",
-    "$dir_pw_third_party/arduino:arduino_core_sources",
-    "//applications/app_common:app_common.facade",
-  ]
-  sources = [ "common_arduino.cc" ]
-  remove_configs = [ "$dir_pw_build:strict_warnings" ]
-}
-
-if (pw_third_party_mcuxpresso_SDK != "") {
-  pw_source_set("mimxrt595") {
-    public_configs = [ ":common_flags" ]
-    deps = [
-      "$dir_pw_display",
-      "$dir_pw_display_driver_mipi_dsi",
-      "$dir_pw_framebuffer_pool_mcuxpresso",
-      "$dir_pw_mipi_dsi_mcuxpresso",
-      "$pw_third_party_mcuxpresso_SDK",
-      "//applications/app_common:app_common.facade",
-    ]
-    sources = [ "common_mimxrt595.cc" ]
-  }
-}
-
 _pico_common_deps = [
   "$PICO_ROOT/src/common/pico_base",
   "$PICO_ROOT/src/common/pico_stdlib",
@@ -145,31 +68,18 @@ _pico_common_deps = [
   "$dir_pw_display",
   "$dir_pw_framebuffer_pool",
   "$dir_pw_i2c_rp2040",
-  "$dir_pw_icm42670p",
   "$dir_pw_log",
-  "$dir_pw_max17948",
   "$dir_pw_spi_rp2040",
   "$dir_pw_sync:borrow",
   "$dir_pw_sync:mutex",
-  "$dir_pw_tca9535",
   "$dir_pw_thread:thread",
   "$dir_pw_thread_freertos:thread",
   "//applications/app_common:app_common.facade",
-  "//lib/pw_ft6236",
+  "//lib/ft6236",
+  "//lib/icm42670p",
+  "//lib/max17948",
+  "//lib/tca9535",
 ]
-
-pw_source_set("pico_ili9341") {
-  public_configs = [
-    ":common_flags",
-    ":spi_flags",
-    ":rp2040_i2c_flags",
-  ]
-  cflags = [ "-DDISPLAY_TYPE_ILI9341" ]
-  deps = _pico_common_deps
-  deps += [ "$dir_pw_display_driver_ili9341" ]
-  sources = [ "common_pico.cc" ]
-  remove_configs = [ "$dir_pw_build:strict_warnings" ]
-}
 
 pw_source_set("pico_st7789") {
   public_configs = [
@@ -196,21 +106,8 @@ pw_source_set("pico_st7789_pio") {
   deps += [
     "$dir_pw_display_driver_st7789",
     "$dir_pw_pixel_pusher_rp2040_pio",
-    "$dir_pw_touchscreen_ft6236",
+    "//lib/pw_touchscreen_ft6236",
   ]
-  sources = [ "common_pico.cc" ]
-  remove_configs = [ "$dir_pw_build:strict_warnings" ]
-}
-
-pw_source_set("pico_st7735") {
-  public_configs = [
-    ":common_flags",
-    ":spi_flags",
-    ":rp2040_i2c_flags",
-  ]
-  cflags = [ "-DDISPLAY_TYPE_ST7735" ]
-  deps = _pico_common_deps
-  deps += [ "$dir_pw_display_driver_st7735" ]
   sources = [ "common_pico.cc" ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
 }
@@ -223,8 +120,8 @@ pw_source_set("host_imgui") {
     "$dir_pw_framebuffer_pool",
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
-    "$dir_pw_touchscreen_imgui",
     "//applications/app_common:app_common.facade",
+    "//lib/pw_touchscreen_imgui",
   ]
   sources = [ "common_host_imgui.cc" ]
   remove_configs = []
@@ -240,8 +137,8 @@ pw_source_set("host_null") {
     "$dir_pw_display_driver_null",
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
-    "$dir_pw_touchscreen_null",
     "//applications/app_common:app_common.facade",
+    "//lib/pw_touchscreen_null",
   ]
   sources = [ "common_host_null.cc" ]
 }

@@ -23,17 +23,3 @@ import("$dir_pigweed/modules.gni")
 
 # Experimental modules.
 import("$dir_pigweed_experimental/modules.gni")
-# Kudzu modules.
-declare_args() {
-  # TODO(tonymd): rename these libararies to not start with "dir_"
-  dir_pw_touchscreen = get_path_info("../lib/pw_touchscreen", "abspath")
-  dir_pw_touchscreen_imgui =
-      get_path_info("../lib/pw_touchscreen_imgui", "abspath")
-  dir_pw_touchscreen_null =
-      get_path_info("../lib/pw_touchscreen_null", "abspath")
-  dir_pw_touchscreen_ft6236 =
-      get_path_info("../lib/pw_touchscreen_ft6236", "abspath")
-  dir_pw_tca9535 = get_path_info("../lib/pw_tca9535", "abspath")
-  dir_pw_max17948 = get_path_info("../lib/pw_max17948", "abspath")
-  dir_pw_icm42670p = get_path_info("../lib/pw_icm42670p", "abspath")
-}
