@@ -24,6 +24,7 @@ pw_python_package("tools") {
   sources = [
     "kudzu_tools/__init__.py",
     "kudzu_tools/build_project.py",
+    "kudzu_tools/presubmit_checks.py",
   ]
   python_deps = [
     "$dir_pw_build/py",

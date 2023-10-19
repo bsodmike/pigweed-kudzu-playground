@@ -32,7 +32,6 @@
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
 #include "pw_system/target_hooks.h"
-#include "pw_system/work_queue.h"
 #include "pw_thread/detached_thread.h"
 
 using pw::color::color_rgb565_t;

@@ -11,7 +11,7 @@
           "function": "watch_project"
         },
         "presubmit": {
-          "module": "pigweed_experimental_tools.presubmit_checks",
+          "module": "kudzu_tools.presubmit_checks",
           "function": "main"
         },
         "heap-viewer": {
@@ -64,4 +64,3 @@
     }
   }
 }
-

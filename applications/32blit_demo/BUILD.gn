@@ -36,7 +36,7 @@ pw_executable("32blit_demo") {
     "$dir_pw_spin_delay",
     "$dir_pw_string",
     "$dir_pw_sys_io",
-    "$dir_pw_system:work_queue",
+    "$dir_pw_system:target_hooks",
     "$dir_pw_thread:thread",
     "$pw_dir_third_party_32blit:32blit",
     "//applications/app_common",
@@ -49,9 +49,7 @@ pw_executable("32blit_demo") {
     remove_configs += [ "$dir_pw_toolchain/host_clang:linux_sysroot" ]
   }
 
-  if (pw_build_EXECUTABLE_TARGET_TYPE == "arduino_executable" ||
-      pw_build_EXECUTABLE_TARGET_TYPE == "pico_executable" ||
-      pw_build_EXECUTABLE_TARGET_TYPE == "mimxrt595_executable") {
+  if (pw_build_EXECUTABLE_TARGET_TYPE == "pico_executable") {
     ldflags = [ "-Wl,--print-memory-usage" ]
   }
 }

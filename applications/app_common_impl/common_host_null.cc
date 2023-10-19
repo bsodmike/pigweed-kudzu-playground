@@ -40,6 +40,8 @@ pw::framebuffer_pool::FramebufferPool s_fb_pool({
 }  // namespace
 
 // static
+Status Common::EndOfFrameCallback() { return pw::OkStatus(); }
+
 Status Common::Init() { return s_display_driver.Init(); }
 
 // static
