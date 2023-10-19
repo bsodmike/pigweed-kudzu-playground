@@ -28,3 +28,15 @@ pw_source_set("pw_touchscreen") {
     "$dir_pw_status",
   ]
 }
+
+pw_source_set("buttons") {
+  public_configs = [ ":public_includes" ]
+  public = [ "public/pw_touchscreen/buttons.h" ]
+  sources = [ "buttons.cc" ]
+  public_deps = [
+    ":pw_touchscreen",
+    "$dir_pw_thread:thread_core",
+    "$pw_dir_third_party_32blit:32blit",
+  ]
+  deps = [ "$dir_pw_log" ]
+}
