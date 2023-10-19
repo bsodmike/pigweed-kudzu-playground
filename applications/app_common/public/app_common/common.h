@@ -38,4 +38,7 @@ class Common {
 
   // Provides thread options for the display thread.
   static const pw::thread::Options& DisplayDrawThreadOptions();
+
+  // Provides thread options for the touchscreen thread.
+  static const pw::thread::Options& TouchscreenThreadOptions();
 };

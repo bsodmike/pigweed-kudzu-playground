@@ -61,3 +61,8 @@ const pw::thread::Options& Common::DisplayDrawThreadOptions() {
   static pw::thread::stl::Options display_draw_thread_options;
   return display_draw_thread_options;
 }
+
+const pw::thread::Options& Common::TouchscreenThreadOptions() {
+  static pw::thread::stl::Options display_draw_thread_options;
+  return display_draw_thread_options;
+}

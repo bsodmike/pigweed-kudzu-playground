@@ -241,6 +241,11 @@ static pw::thread::freertos::StaticContextWithStack<
     kDisplayDrawThreadStackWords>
     display_draw_thread_context;
 
+static constexpr size_t kTouchscreenThreadStackWords = 512;
+static pw::thread::freertos::StaticContextWithStack<
+    kTouchscreenThreadStackWords>
+    touchscreen_thread_context;
+
 Rp2040DigitalInOut s_io_reset_n(10);
 Rp2040DigitalInOut s_imu_fsync(13);
 
@@ -356,6 +361,16 @@ const pw::thread::Options& Common::DisplayDrawThreadOptions() {
       pw::thread::freertos::Options()
           .set_name("DisplayDrawThread")
           .set_static_context(display_draw_thread_context)
+          // TODO: amontanez - Find a way to better manage priorities.
+          .set_priority(static_cast<UBaseType_t>(tskIDLE_PRIORITY + 1));
+  return options;
+}
+
+const pw::thread::Options& Common::TouchscreenThreadOptions() {
+  static constexpr auto options =
+      pw::thread::freertos::Options()
+          .set_name("TouchscreenThread")
+          .set_static_context(touchscreen_thread_context)
           // TODO: amontanez - Find a way to better manage priorities.
           .set_priority(static_cast<UBaseType_t>(tskIDLE_PRIORITY + 1));
   return options;
