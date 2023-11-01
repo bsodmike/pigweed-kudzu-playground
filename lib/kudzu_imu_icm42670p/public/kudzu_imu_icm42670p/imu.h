@@ -13,30 +13,23 @@
 // the License.
 #pragma once
 
-#include <array>
-#include <cstdint>
-
 #include "kudzu_imu/imu.h"
-#include "pw_i2c/address.h"
-#include "pw_i2c/initiator.h"
-#include "pw_i2c/register_device.h"
 #include "pw_status/status.h"
 
-namespace kudzu::icm42670p {
+namespace kudzu::imu {
 
-class Device {
+class PollingImuICM42670P : public PollingImu {
  public:
-  Device(pw::i2c::Initiator& initiator);
-  ~Device() = default;
+  PollingImuICM42670P(kudzu::icm42670p::Device* imu_controller);
 
-  pw::Status Enable();
-  pw::Status Probe();
-  void LogControllerInfo();
-  pw::Result<kudzu::imu::ImuSample> ReadValues();
+  pw::Status Init() override;
+  bool IsAvailable() override;
+  pw::Result<ImuSample> ReadData() override;
+
+  ImuSample last_data;
 
  private:
-  pw::i2c::Initiator& initiator_;
-  pw::i2c::RegisterDevice device_;
+  kudzu::icm42670p::Device* imu_controller_;
 };
 
-}  // namespace kudzu::icm42670p
+}  // namespace kudzu::imu

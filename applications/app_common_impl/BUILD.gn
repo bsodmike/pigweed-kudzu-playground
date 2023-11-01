@@ -77,6 +77,7 @@ _pico_common_deps = [
   "//applications/app_common:app_common.facade",
   "//lib/ft6236",
   "//lib/icm42670p",
+  "//lib/kudzu_imu_icm42670p",
   "//lib/max17948",
   "//lib/tca9535",
 ]
@@ -121,6 +122,7 @@ pw_source_set("host_imgui") {
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
     "//applications/app_common:app_common.facade",
+    "//lib/kudzu_imu_imgui",
     "//lib/pw_touchscreen_imgui",
   ]
   sources = [ "common_host_imgui.cc" ]

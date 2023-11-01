@@ -12,6 +12,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 #include "app_common/common.h"
+#include "kudzu_imu_imgui/imu.h"
 #include "pw_color/color.h"
 #include "pw_display_driver_imgui/display_driver.h"
 #include "pw_display_imgui/display.h"
@@ -69,6 +70,11 @@ pw::display::Display& Common::GetDisplay() {
 pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
   static Touchscreen s_touchscreen = Touchscreen(s_display_driver);
   return s_touchscreen;
+}
+
+kudzu::imu::PollingImu& Common::GetImu() {
+  static kudzu::imu::PollingImuImGui s_imu = kudzu::imu::PollingImuImGui();
+  return s_imu;
 }
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {

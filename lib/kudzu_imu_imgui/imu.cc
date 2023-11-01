@@ -11,32 +11,33 @@
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations under
 // the License.
-#pragma once
-
-#include <array>
-#include <cstdint>
 
 #include "kudzu_imu/imu.h"
-#include "pw_i2c/address.h"
-#include "pw_i2c/initiator.h"
-#include "pw_i2c/register_device.h"
-#include "pw_status/status.h"
 
-namespace kudzu::icm42670p {
+#include <math.h>
 
-class Device {
- public:
-  Device(pw::i2c::Initiator& initiator);
-  ~Device() = default;
+#include <cinttypes>
 
-  pw::Status Enable();
-  pw::Status Probe();
-  void LogControllerInfo();
-  pw::Result<kudzu::imu::ImuSample> ReadValues();
+#define PW_LOG_MODULE_NAME "kudzu_imu_imgui"
+#define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
- private:
-  pw::i2c::Initiator& initiator_;
-  pw::i2c::RegisterDevice device_;
-};
+#include "kudzu_imu_imgui/imu.h"
+#include "pw_log/log.h"
 
-}  // namespace kudzu::icm42670p
+namespace kudzu::imu {
+
+PollingImuImGui::PollingImuImGui() {}
+
+pw::Status PollingImuImGui::Init() { return pw::Status::Unimplemented(); }
+
+bool PollingImuImGui::IsAvailable() { return true; }
+
+pw::Result<ImuSample> PollingImuImGui::ReadData() {
+  ImuSample data = {.accelerometer = {1.0f, 2.0f, 3.0f},
+                    .gyroscope = {10, 20, 30}};
+
+  last_data = data;
+  return data;
+}
+
+}  // namespace kudzu::imu

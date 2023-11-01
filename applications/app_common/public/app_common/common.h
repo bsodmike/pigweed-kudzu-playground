@@ -13,6 +13,7 @@
 // the License.
 #pragma once
 
+#include "kudzu_imu/imu.h"
 #include "pw_display/display.h"
 #include "pw_status/status.h"
 #include "pw_thread/thread.h"
@@ -32,6 +33,9 @@ class Common {
 
   // Return an initialized display.
   static pw::display::Display& GetDisplay();
+
+  // Return an initialized display.
+  static kudzu::imu::PollingImu& GetImu();
 
   // Return an initialized touchscreen.
   static pw::touchscreen::Touchscreen& GetTouchscreen();

@@ -23,6 +23,7 @@ pw_source_set("icm42670p") {
   public_configs = [ ":default_config" ]
   public_deps = [
     "$dir_pw_i2c:initiator",
+    "$dir_pw_result",
     "$dir_pw_status",
   ]
   public = [ "public/icm42670p/device.h" ]
@@ -30,6 +31,7 @@ pw_source_set("icm42670p") {
     "$dir_pw_digital_io",
     "$dir_pw_i2c:register_device",
     "$dir_pw_log",
+    "//lib/kudzu_imu:kudzu_imu",
   ]
   sources = [ "device.cc" ]
   remove_configs = [ "$dir_pw_build:strict_warnings" ]
