@@ -26,13 +26,11 @@ const char* kReleasedText = "released";
 
 }  // namespace
 
-DirectionTouchButtonsThread::DirectionTouchButtonsThread(
+DirectionTouchButtons::DirectionTouchButtons(
     DirectionButtonListener& button_listener,
-    Touchscreen& touchscreen,
     int32_t display_width,
     int32_t display_height)
     : button_listener_(button_listener),
-      touchscreen_(touchscreen),
       up_button_(display_width / 2, display_height / 4, display_width / 4, 0),
       down_button_(display_width / 2,
                    display_height / 4,
@@ -45,32 +43,26 @@ DirectionTouchButtonsThread::DirectionTouchButtonsThread(
                     display_width - display_width / 4,
                     display_height / 4) {}
 
-void DirectionTouchButtonsThread::Run() {
-  while (true) {
-    // TODO(b/306403638): Make the polling configurable and set it at a low
-    // rate no higher than the frame rate.
-    TouchEvent touch_event = touchscreen_.GetTouchPoint();
-    if (touch_event.type == TouchEventType::Start ||
-        touch_event.type == TouchEventType::Stop) {
-      const bool pressed = touch_event.type == TouchEventType::Start;
-      PW_LOG_DEBUG(
-          "Touch at: %d, %d", touch_event.point.x, touch_event.point.y);
-      if (up_button_.contains(touch_event.point.x, touch_event.point.y)) {
-        PW_LOG_DEBUG("Up button %s", pressed ? kPressedText : kReleasedText);
-        button_listener_.OnButtonUp(pressed);
-      } else if (down_button_.contains(touch_event.point.x,
-                                       touch_event.point.y)) {
-        PW_LOG_DEBUG("Down button %s", pressed ? kPressedText : kReleasedText);
-        button_listener_.OnButtonDown(pressed);
-      } else if (left_button_.contains(touch_event.point.x,
-                                       touch_event.point.y)) {
-        PW_LOG_DEBUG("Left button %s", pressed ? kPressedText : kReleasedText);
-        button_listener_.OnButtonLeft(pressed);
-      } else if (right_button_.contains(touch_event.point.x,
-                                        touch_event.point.y)) {
-        PW_LOG_DEBUG("Right button %s", pressed ? kPressedText : kReleasedText);
-        button_listener_.OnButtonRight(pressed);
-      }
+void DirectionTouchButtons::OnTouchEvent(const TouchEvent& touch_event) {
+  if (touch_event.type == TouchEventType::Start ||
+      touch_event.type == TouchEventType::Stop) {
+    const bool pressed = touch_event.type == TouchEventType::Start;
+    PW_LOG_DEBUG("Touch at: %d, %d", touch_event.point.x, touch_event.point.y);
+    if (up_button_.contains(touch_event.point.x, touch_event.point.y)) {
+      PW_LOG_DEBUG("Up button %s", pressed ? kPressedText : kReleasedText);
+      button_listener_.OnButtonUp(pressed);
+    } else if (down_button_.contains(touch_event.point.x,
+                                     touch_event.point.y)) {
+      PW_LOG_DEBUG("Down button %s", pressed ? kPressedText : kReleasedText);
+      button_listener_.OnButtonDown(pressed);
+    } else if (left_button_.contains(touch_event.point.x,
+                                     touch_event.point.y)) {
+      PW_LOG_DEBUG("Left button %s", pressed ? kPressedText : kReleasedText);
+      button_listener_.OnButtonLeft(pressed);
+    } else if (right_button_.contains(touch_event.point.x,
+                                      touch_event.point.y)) {
+      PW_LOG_DEBUG("Right button %s", pressed ? kPressedText : kReleasedText);
+      button_listener_.OnButtonRight(pressed);
     }
   }
 }

@@ -28,11 +28,38 @@
 #include "pw_system/target_hooks.h"
 #include "pw_system/work_queue.h"
 #include "pw_thread/detached_thread.h"
+#include "pw_thread/thread_core.h"
 #include "pw_touchscreen/buttons.h"
 #include "pw_touchscreen/touchscreen.h"
 #include "snake/game.h"
 
 namespace {
+
+constexpr uint32_t kFramesPerSecond = 16;
+constexpr uint32_t kWaitMillis = 1000 / kFramesPerSecond;
+
+class PollingTouchButtonsThread : public pw::thread::ThreadCore {
+ public:
+  PollingTouchButtonsThread(
+      pw::touchscreen::Touchscreen& touchscreen,
+      pw::touchscreen::DirectionButtonListener& button_listener,
+      int32_t display_width,
+      int32_t display_height)
+      : touchscreen_(touchscreen),
+        buttons_(button_listener, display_width, display_height) {}
+
+  void Run() override {
+    while (true) {
+      pw::touchscreen::TouchEvent touch_event = touchscreen_.GetTouchPoint();
+      buttons_.OnTouchEvent(touch_event);
+      pw::spin_delay::WaitMillis(kWaitMillis);
+    }
+  }
+
+ private:
+  pw::touchscreen::Touchscreen& touchscreen_;
+  pw::touchscreen::DirectionTouchButtons buttons_;
+};
 
 void MainTask(void*) {
   pw::board_led::Init();
@@ -54,8 +81,8 @@ void MainTask(void*) {
   display.ReleaseFramebuffer(std::move(framebuffer));
 
   snake::Game game(display_width, display_height);
-  pw::touchscreen::DirectionTouchButtonsThread touch_buttons_thread{
-      game, Common::GetTouchscreen(), display_width, display_height};
+  PollingTouchButtonsThread touch_buttons_thread{
+      Common::GetTouchscreen(), game, display_width, display_height};
   pw::thread::DetachedThread(Common::TouchscreenThreadOptions(),
                              touch_buttons_thread);
 
@@ -63,8 +90,8 @@ void MainTask(void*) {
 
   // Display and app loop.
   kudzu::FrameCounter frame_counter = kudzu::FrameCounter();
-  uint32_t frame_start_millis = pw::spin_delay::Millis();
-  while (1) {
+  uint32_t last_report_time = pw::spin_delay::Millis();
+  while (true) {
     frame_counter.StartFrame();
 
     // Get frame buffer.
@@ -84,12 +111,14 @@ void MainTask(void*) {
     display.ReleaseFramebuffer(std::move(framebuffer));
     frame_counter.EndFlush();
 
-    // Every second make a log message.
     frame_counter.EndFrame();
 
-    if (pw::spin_delay::Millis() > frame_start_millis + 10000) {
+    pw::spin_delay::WaitMillis(kWaitMillis);
+
+    // Periodically make a log message.
+    if (pw::spin_delay::Millis() > last_report_time + 10000) {
       Common::EndOfFrameCallback();
-      frame_start_millis = pw::spin_delay::Millis();
+      last_report_time = pw::spin_delay::Millis();
     }
   }
 }

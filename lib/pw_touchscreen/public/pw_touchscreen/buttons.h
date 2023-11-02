@@ -15,7 +15,6 @@
 
 #include <cstdint>
 
-#include "pw_thread/thread_core.h"
 #include "pw_touchscreen/touchscreen.h"
 #include "types/point.hpp"
 #include "types/rect.hpp"
@@ -53,21 +52,17 @@ class DirectionButtonListener {
 };
 
 // Creates a set of direction buttons (up, down, left, and right) on the given
-// touch screen.
-// TODO(b/306403638): Make the polling rate configurable and poll at a lower
-// rate.
-class DirectionTouchButtonsThread : public pw::thread::ThreadCore {
+// touch screen and redirects touch events to button listener when applicable.
+class DirectionTouchButtons {
  public:
-  DirectionTouchButtonsThread(DirectionButtonListener& button_listener,
-                              Touchscreen& touchscreen,
-                              int32_t display_width,
-                              int32_t display_height);
+  DirectionTouchButtons(DirectionButtonListener& button_listener,
+                        int32_t display_width,
+                        int32_t display_height);
 
-  void Run() override;
+  void OnTouchEvent(const TouchEvent& touch_event);
 
  private:
   DirectionButtonListener& button_listener_;
-  Touchscreen& touchscreen_;
   TouchButton up_button_;
   TouchButton down_button_;
   TouchButton left_button_;
