@@ -63,7 +63,7 @@ pw_system_target("rp2040") {
     pw_third_party_freertos_CONFIG = "//targets/rp2040:freertos_config"
     pw_third_party_freertos_PORT = "$dir_pw_third_party/freertos:arm_cm0"
 
-    pw_sys_io_BACKEND = dir_pw_sys_io_stdio
+    pw_sys_io_BACKEND = dir_pw_sys_io_rp2040
 
     pw_build_LINK_DEPS += [
       "//targets/rp2040:pre_init",
