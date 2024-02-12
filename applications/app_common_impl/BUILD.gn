@@ -79,7 +79,7 @@ _pico_common_deps = [
   "//lib/icm42670p",
   "//lib/kudzu_imu_icm42670p",
   "//lib/max17048",
-  "//lib/tca9535",
+  "//lib/pi4ioe5v6416",
 ]
 
 pw_source_set("pico_st7789") {

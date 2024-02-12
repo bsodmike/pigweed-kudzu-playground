@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "tca9535/device.h"
+#include "pi4ioe5v6416/device.h"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 
-#define PW_LOG_MODULE_NAME "tca9535"
+#define PW_LOG_MODULE_NAME "pi4ioe5v6416"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_bytes/bit.h"
@@ -30,7 +30,7 @@
 using ::pw::Status;
 using namespace std::chrono_literals;
 
-namespace pw::tca9535 {
+namespace pw::pi4ioe5v6416 {
 
 namespace {
 
@@ -63,9 +63,9 @@ Status Device::Probe() {
       kAddress, pw::chrono::SystemClock::for_at_least(10ms)));
 
   if (probe_result != pw::OkStatus()) {
-    PW_LOG_DEBUG("TCA9535 Probe Failed");
+    PW_LOG_DEBUG("pi4ioe5v6416 Probe Failed");
   } else {
-    PW_LOG_DEBUG("TCA9535 Probe Ok");
+    PW_LOG_DEBUG("pi4ioe5v6416 Probe Ok");
   }
   return probe_result;
 }
@@ -88,4 +88,4 @@ void Device::LogControllerInfo() {
   }
 }
 
-}  // namespace pw::tca9535
+}  // namespace pw::pi4ioe5v6416

@@ -19,13 +19,13 @@ config("default_config") {
   include_dirs = [ "public" ]
 }
 
-pw_source_set("tca9535") {
+pw_source_set("pi4ioe5v6416") {
   public_configs = [ ":default_config" ]
   public_deps = [
     "$dir_pw_i2c:initiator",
     "$dir_pw_status",
   ]
-  public = [ "public/tca9535/device.h" ]
+  public = [ "public/pi4ioe5v6416/device.h" ]
   deps = [
     "$dir_pw_digital_io",
     "$dir_pw_i2c:register_device",
