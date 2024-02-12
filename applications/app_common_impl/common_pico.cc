@@ -264,10 +264,11 @@ static pw::thread::freertos::StaticContextWithStack<
 
 Rp2040DigitalInOut s_io_reset_n({
     .pin = 10,
-    .polarity = pw::digital_io::Polarity::kActiveHigh,
+    // IO expander resets when this pin is pulled low.
+    .polarity = pw::digital_io::Polarity::kActiveLow,
 });
 Rp2040DigitalInOut s_imu_fsync({
-    .pin = 10,
+    .pin = 13,
     .polarity = pw::digital_io::Polarity::kActiveHigh,
 });
 
@@ -318,10 +319,11 @@ Status Common::Init() {
   i2c1_bus.Enable();
 
   s_io_reset_n.Enable();
-  s_io_reset_n.SetStateActive();
+  // Disable reset pin - normal operation.
+  s_io_reset_n.SetStateInactive();
 
+  // IMU FSYNC not used yet
   s_imu_fsync.Enable();
-  s_imu_fsync.SetStateInactive();
 
   touch_screen_controller.Enable();
   if (touch_screen_controller.Probe() == pw::OkStatus()) {
