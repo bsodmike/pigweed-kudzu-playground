@@ -25,7 +25,7 @@
 #include "hardware/vreg.h"
 #include "icm42670p/device.h"
 #include "kudzu_imu_icm42670p/imu.h"
-#include "max17948/device.h"
+#include "max17048/device.h"
 #include "pico/stdlib.h"
 #include "pw_digital_io_rp2040/digital_io.h"
 #include "pw_i2c_rp2040/initiator.h"
@@ -249,7 +249,7 @@ pw::i2c::PicoInitiator i2c1_bus(ki2c1Config);
 
 pw::tca9535::Device io_expander(i2c1_bus);
 kudzu::icm42670p::Device imu(i2c0_bus);
-pw::max17948::Device fuel_guage(i2c0_bus);
+pw::max17048::Device fuel_guage(i2c0_bus);
 pw::ft6236::Device touch_screen_controller(i2c0_bus);
 
 static constexpr size_t kDisplayDrawThreadStackWords = 512;

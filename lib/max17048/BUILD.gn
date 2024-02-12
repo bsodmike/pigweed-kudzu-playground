@@ -19,13 +19,13 @@ config("default_config") {
   include_dirs = [ "public" ]
 }
 
-pw_source_set("max17948") {
+pw_source_set("max17048") {
   public_configs = [ ":default_config" ]
   public_deps = [
     "$dir_pw_i2c:initiator",
     "$dir_pw_status",
   ]
-  public = [ "public/max17948/device.h" ]
+  public = [ "public/max17048/device.h" ]
   deps = [
     "$dir_pw_digital_io",
     "$dir_pw_i2c:register_device",

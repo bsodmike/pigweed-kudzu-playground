@@ -21,7 +21,7 @@
 #include "pw_i2c/register_device.h"
 #include "pw_status/status.h"
 
-namespace pw::max17948 {
+namespace pw::max17048 {
 
 class Device {
  public:
@@ -37,4 +37,4 @@ class Device {
   pw::i2c::RegisterDevice device_;
 };
 
-}  // namespace pw::max17948
+}  // namespace pw::max17048

@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-#include "max17948/device.h"
+#include "max17048/device.h"
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 
-#define PW_LOG_MODULE_NAME "max17948"
+#define PW_LOG_MODULE_NAME "max17048"
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_bytes/bit.h"
@@ -30,7 +30,7 @@
 using ::pw::Status;
 using namespace std::chrono_literals;
 
-namespace pw::max17948 {
+namespace pw::max17048 {
 
 namespace {
 
@@ -70,9 +70,9 @@ Status Device::Probe() {
       kAddress, pw::chrono::SystemClock::for_at_least(10ms)));
 
   if (probe_result != pw::OkStatus()) {
-    PW_LOG_DEBUG("MAX17948 Probe Failed");
+    PW_LOG_DEBUG("MAX17048 Probe Failed");
   } else {
-    PW_LOG_DEBUG("MAX17948 Probe Ok");
+    PW_LOG_DEBUG("MAX17048 Probe Ok");
   }
   return probe_result;
 }
@@ -96,4 +96,4 @@ void Device::LogControllerInfo() {
   FuelReadReg(device_, 0x1a, "STATUS");
 }
 
-}  // namespace pw::max17948
+}  // namespace pw::max17048

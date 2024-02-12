@@ -78,7 +78,7 @@ _pico_common_deps = [
   "//lib/ft6236",
   "//lib/icm42670p",
   "//lib/kudzu_imu_icm42670p",
-  "//lib/max17948",
+  "//lib/max17048",
   "//lib/tca9535",
 ]
 
