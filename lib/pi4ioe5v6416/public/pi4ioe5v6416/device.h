@@ -19,6 +19,7 @@
 #include "pw_i2c/address.h"
 #include "pw_i2c/initiator.h"
 #include "pw_i2c/register_device.h"
+#include "pw_result/result.h"
 #include "pw_status/status.h"
 
 namespace pw::pi4ioe5v6416 {
@@ -31,6 +32,8 @@ class Device {
   Status Enable();
   Status Probe();
   void LogControllerInfo();
+  pw::Result<uint8_t> ReadPort0();
+  pw::Result<uint8_t> ReadPort1();
 
  private:
   pw::i2c::Initiator& initiator_;

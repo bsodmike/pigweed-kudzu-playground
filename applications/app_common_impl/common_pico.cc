@@ -267,6 +267,10 @@ Rp2040DigitalInOut s_io_reset_n({
     // IO expander resets when this pin is pulled low.
     .polarity = pw::digital_io::Polarity::kActiveLow,
 });
+Rp2040DigitalInOut s_io_interrupt_n({
+    .pin = 11,
+    .polarity = pw::digital_io::Polarity::kActiveLow,
+});
 Rp2040DigitalInOut s_imu_fsync({
     .pin = 13,
     .polarity = pw::digital_io::Polarity::kActiveHigh,
@@ -321,6 +325,7 @@ Status Common::Init() {
   s_io_reset_n.Enable();
   // Disable reset pin - normal operation.
   s_io_reset_n.SetStateInactive();
+  s_io_interrupt_n.Enable();
 
   // IMU FSYNC not used yet
   s_imu_fsync.Enable();
