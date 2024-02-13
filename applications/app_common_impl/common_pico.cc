@@ -119,8 +119,6 @@ constexpr pw::spi::Config kSpiConfig16Bit{
     .bit_order = pw::spi::BitOrder::kMsbFirst,
 };
 
-// TODO(tonymd): Determine the correct polarity and update the these modules:
-// pw_spi_rp2040 and pw_pixel_pusher_rp2040_pio
 Rp2040DigitalInOut s_display_dc_pin({
     .pin = DISPLAY_DC_GPIO,
     .polarity = pw::digital_io::Polarity::kActiveHigh,
@@ -128,7 +126,7 @@ Rp2040DigitalInOut s_display_dc_pin({
 #if DISPLAY_RESET_GPIO != -1
 Rp2040DigitalInOut s_display_reset_pin({
     .pin = DISPLAY_RESET_GPIO,
-    .polarity = pw::digital_io::Polarity::kActiveHigh,
+    .polarity = pw::digital_io::Polarity::kActiveLow,
 });
 #endif
 #if DISPLAY_TE_GPIO != -1
@@ -139,7 +137,7 @@ Rp2040DigitalIn s_display_tear_effect_pin({
 #endif
 Rp2040DigitalInOut s_display_cs_pin({
     .pin = DISPLAY_CS_GPIO,
-    .polarity = pw::digital_io::Polarity::kActiveHigh,
+    .polarity = pw::digital_io::Polarity::kActiveLow,
 });
 PicoChipSelector s_spi_chip_selector(s_display_cs_pin);
 PicoInitiator s_spi_initiator(SPI_PORT);
