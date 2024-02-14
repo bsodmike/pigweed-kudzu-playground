@@ -37,7 +37,8 @@
       "relative_pigweed_root": "third_party/pigweed",
       "rosetta": "allow",
       "cipd_package_files": [
-        "third_party/pigweed/pw_env_setup/py/pw_env_setup/cipd_setup/default.json"
+        "third_party/pigweed/pw_env_setup/py/pw_env_setup/cipd_setup/default.json",
+        "third_party/pigweed/pw_env_setup/py/pw_env_setup/cipd_setup/cmake.json"
       ],
       "virtualenv": {
         "gn_root": ".",
