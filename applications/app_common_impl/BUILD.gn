@@ -69,6 +69,7 @@ _pico_common_deps = [
   "$dir_pw_framebuffer_pool",
   "$dir_pw_i2c_rp2040",
   "$dir_pw_log",
+  "$dir_pw_spi:chip_selector_digital_out",
   "$dir_pw_spi_rp2040",
   "$dir_pw_sync:borrow",
   "$dir_pw_sync:mutex",
