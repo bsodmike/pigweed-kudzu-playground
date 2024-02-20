@@ -46,10 +46,7 @@ pw_system_target("rp2040") {
   scheduler = PW_SYSTEM_SCHEDULER.FREERTOS
   use_pw_malloc = false
 
-  # This is critical because otherwise the Pico SDK will emit \r\n every time
-  # a \n is written out over serial.
-  global_configs =
-      [ "//third_party/pigweed/targets/rp2040_pw_system:rp2040_hal_config" ]
+  global_configs = [ "$dir_pigweed/targets/rp2040:rp2040_hal_config" ]
 
   build_args = {
     pw_build_EXECUTABLE_TARGET_TYPE = "pico_executable"
