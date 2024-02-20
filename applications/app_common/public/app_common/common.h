@@ -13,6 +13,7 @@
 // the License.
 #pragma once
 
+#include "kudzu_buttons/buttons.h"
 #include "kudzu_imu/imu.h"
 #include "pw_display/display.h"
 #include "pw_status/status.h"
@@ -39,6 +40,8 @@ class Common {
 
   // Return an initialized touchscreen.
   static pw::touchscreen::Touchscreen& GetTouchscreen();
+
+  static kudzu::Buttons& GetButtons();
 
   // Provides thread options for the display thread.
   static const pw::thread::Options& DisplayDrawThreadOptions();

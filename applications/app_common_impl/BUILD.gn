@@ -108,6 +108,7 @@ pw_source_set("pico_st7789_pio") {
   deps += [
     "$dir_pw_display_driver_st7789",
     "$dir_pw_pixel_pusher_rp2040_pio",
+    "//lib/kudzu_buttons_pi4ioe5v6416",
     "//lib/pw_touchscreen_ft6236",
   ]
   sources = [ "common_pico.cc" ]
@@ -123,6 +124,7 @@ pw_source_set("host_imgui") {
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
     "//applications/app_common:app_common.facade",
+    "//lib/kudzu_buttons_imgui",
     "//lib/kudzu_imu_imgui",
     "//lib/pw_touchscreen_imgui",
   ]
@@ -141,6 +143,7 @@ pw_source_set("host_null") {
     "$dir_pw_thread:thread",
     "$dir_pw_thread_stl:thread",
     "//applications/app_common:app_common.facade",
+    "//lib/kudzu_buttons_null",
     "//lib/pw_touchscreen_null",
   ]
   sources = [ "common_host_null.cc" ]

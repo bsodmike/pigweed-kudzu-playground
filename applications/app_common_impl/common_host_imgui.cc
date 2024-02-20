@@ -12,11 +12,13 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 #include "app_common/common.h"
+#include "kudzu_buttons_imgui/buttons.h"
 #include "kudzu_imu_imgui/imu.h"
 #include "pw_color/color.h"
 #include "pw_display_driver_imgui/display_driver.h"
 #include "pw_display_imgui/display.h"
 #include "pw_framebuffer_pool/framebuffer_pool.h"
+#include "pw_status/status.h"
 #include "pw_status/try.h"
 #include "pw_thread/thread.h"
 #include "pw_thread_stl/options.h"
@@ -28,6 +30,7 @@ using pw::framebuffer::PixelFormat;
 using pw::framebuffer_pool::FramebufferPool;
 
 using Touchscreen = pw::touchscreen::TouchscreenImGui;
+using Buttons = kudzu::ButtonsImgui;
 
 namespace {
 
@@ -58,7 +61,17 @@ pw::display_driver::DisplayDriverImgUI s_display_driver;
 // static
 Status Common::EndOfFrameCallback() { return pw::OkStatus(); }
 
-Status Common::Init() { return s_display_driver.Init(); }
+Status Common::Init() {
+  auto status = s_display_driver.Init();
+  if (!status.ok()) {
+    return status;
+  }
+  status = GetButtons().Init();
+  if (!status.ok()) {
+    return status;
+  }
+  return pw::OkStatus();
+}
 
 // static
 pw::display::Display& Common::GetDisplay() {
@@ -70,6 +83,11 @@ pw::display::Display& Common::GetDisplay() {
 pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
   static Touchscreen s_touchscreen = Touchscreen(s_display_driver);
   return s_touchscreen;
+}
+
+kudzu::Buttons& Common::GetButtons() {
+  static Buttons s_buttons = Buttons(s_display_driver);
+  return s_buttons;
 }
 
 kudzu::imu::PollingImu& Common::GetImu() {

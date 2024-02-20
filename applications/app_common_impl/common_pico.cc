@@ -24,6 +24,7 @@
 #include "hardware/pwm.h"
 #include "hardware/vreg.h"
 #include "icm42670p/device.h"
+#include "kudzu_buttons_pi4ioe5v6416/buttons.h"
 #include "kudzu_imu_icm42670p/imu.h"
 #include "max17048/device.h"
 #include "pi4ioe5v6416/device.h"
@@ -60,6 +61,7 @@ using DisplayDriver = pw::display_driver::DisplayDriverST7789;
 #endif
 
 using Touchscreen = pw::touchscreen::TouchscreenFT6236;
+using Buttons = kudzu::ButtonsPI4IOE5V6416;
 
 using pw::Status;
 using pw::digital_io::Rp2040Config;
@@ -277,7 +279,7 @@ Rp2040DigitalInOut s_imu_fsync({
 }  // namespace
 
 Status Common::EndOfFrameCallback() {
-  // touch_screen_controller.LogControllerInfo();
+  touch_screen_controller.LogControllerInfo();
 
   if (io_expander.Probe() == pw::OkStatus()) {
     io_expander.LogControllerInfo();
@@ -381,6 +383,11 @@ pw::display::Display& Common::GetDisplay() {
 pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
   static Touchscreen s_touchscreen = Touchscreen(&touch_screen_controller);
   return s_touchscreen;
+}
+
+kudzu::Buttons& Common::GetButtons() {
+  static Buttons s_buttons = Buttons(&io_expander);
+  return s_buttons;
 }
 
 kudzu::imu::PollingImu& Common::GetImu() {

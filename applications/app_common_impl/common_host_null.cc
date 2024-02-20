@@ -12,6 +12,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 #include "app_common/common.h"
+#include "kudzu_buttons_null/buttons.h"
 #include "pw_display/display.h"
 #include "pw_display_driver_null/display_driver.h"
 #include "pw_status/try.h"
@@ -22,6 +23,8 @@
 using pw::Status;
 using pw::framebuffer::PixelFormat;
 using pw::framebuffer_pool::FramebufferPool;
+
+using Buttons = kudzu::ButtonsNull;
 
 namespace {
 
@@ -55,6 +58,11 @@ pw::touchscreen::Touchscreen& Common::GetTouchscreen() {
   static pw::touchscreen::TouchscreenNull s_touchscreen =
       pw::touchscreen::TouchscreenNull();
   return s_touchscreen;
+}
+
+kudzu::Buttons& Common::GetButtons() {
+  static Buttons s_buttons = Buttons();
+  return s_buttons;
 }
 
 const pw::thread::Options& Common::DisplayDrawThreadOptions() {

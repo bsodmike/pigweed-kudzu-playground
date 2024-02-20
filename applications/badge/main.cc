@@ -22,6 +22,7 @@
 #include "graphics/surface.hpp"
 #include "heart_8x8.h"
 #include "hello_my_name_is65x42.h"
+#include "kudzu_buttons/buttons.h"
 #include "kudzu_isometric_text_sprite.h"
 #include "libkudzu/framecounter.h"
 #include "libkudzu/random.h"
@@ -46,6 +47,7 @@
 #include "pw_thread/detached_thread.h"
 #include "pw_touchscreen/touchscreen.h"
 
+using kudzu::Buttons;
 using pw::color::color_rgb565_t;
 using pw::color::colors_pico8_rgb565;
 using pw::display::Display;
@@ -62,6 +64,7 @@ constexpr float angle_step = twopi / 120;
 float angle = 0;
 
 bool show_nametag = false;
+bool show_background = false;
 
 // Draw the a waving text banner.
 // Returns the bottom Y coordinate of the bottommost pixel set.
@@ -123,13 +126,15 @@ void DrawTextBanner(Framebuffer& framebuffer) {
   }
 }
 
-void DrawKudzu(Framebuffer& framebuffer) {
+void DrawKudzu(Framebuffer& framebuffer,
+               float y_scale_offset = 0.0,
+               float x_scale_offset = 0.0) {
   Vector2<int> tl = {0, 16};
 
   const float y_scale = 12.0;
   const float x_scale = 1.0;
-  const float max_x_offset = 4.0;
-  const float max_y_offset = 16.0;
+  const float max_x_offset = 4.0 + x_scale_offset;
+  const float max_y_offset = 16.0 + y_scale_offset;
 
   // X offsets between each letter
   std::array<int, 5> x_offsets = {32, 22, 26, 30, 0};
@@ -205,7 +210,6 @@ void DrawNametag(Framebuffer& framebuffer, blit::Surface& screen) {
   tag_position += blit::Point(4, name_rect_y_offset);
   blit::Size name_size(screen.bounds.w - 8,
                        screen.bounds.h - name_rect_y_offset - 4);
-  PW_LOG_DEBUG("Tag size: %d, %d", name_size.w, name_size.h);
 
   blit::Rect name_rect(tag_position, name_size);
   screen.pen = blit::Pen(0xff, 0xff, 0xff);
@@ -213,6 +217,19 @@ void DrawNametag(Framebuffer& framebuffer, blit::Surface& screen) {
 
   pw::draw::DrawSprite(
       framebuffer, tag_position.x, tag_position.y, &name_tag_sprite_sheet, 1);
+}
+
+void DrawBackgroundColors(Framebuffer& framebuffer) {
+  static color_rgb565_t base_color = 0;
+  static uint16_t magic = 27;
+
+  uint16_t* p = static_cast<uint16_t*>(framebuffer.data());
+  for (int y = 0; y < framebuffer.size().height; y++) {
+    for (int x = 0; x < framebuffer.size().width; x++) {
+      *p++ = base_color + magic * (x ^ y);
+    }
+  }
+  base_color += 0x0021;
 }
 
 void MainTask(void*) {
@@ -237,7 +254,14 @@ void MainTask(void*) {
   Touchscreen& touchscreen = Common::GetTouchscreen();
   pw::touchscreen::TouchEvent last_touch_event;
 
+  Buttons& kudzu_buttons = Common::GetButtons();
+
   uint32_t frame_start_millis = pw::spin_delay::Millis();
+
+  float x_scale_offset = 0.0;
+  float y_scale_offset = 0.0;
+  const float x_scale_increment = 0.7;
+  const float y_scale_increment = 0.7;
   // The display loop.
   while (1) {
     frame_counter.StartFrame();
@@ -263,6 +287,28 @@ void MainTask(void*) {
     blit::Point button_position(screen.bounds.w - button_size.w, 0);
     blit::Rect mode_button_rect(button_position, button_size);
 
+    kudzu_buttons.Update();
+    if (kudzu_buttons.Pressed(kudzu::button::a)) {
+      show_nametag = !show_nametag;
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::b)) {
+      show_background = !show_background;
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::start)) {
+      x_scale_offset = 0;
+      y_scale_offset = 0;
+    }
+    if (kudzu_buttons.Held(kudzu::button::left)) {
+      y_scale_offset += y_scale_increment;
+    } else if (kudzu_buttons.Held(kudzu::button::right)) {
+      y_scale_offset -= y_scale_increment;
+    }
+    if (kudzu_buttons.Held(kudzu::button::up)) {
+      x_scale_offset += x_scale_increment;
+    } else if (kudzu_buttons.Held(kudzu::button::down)) {
+      x_scale_offset -= x_scale_increment;
+    }
+
     if (show_nametag) {
       DrawNametag(framebuffer, screen);
       // Draw button
@@ -273,7 +319,10 @@ void MainTask(void*) {
                   true,
                   blit::TextAlign::top_right);
     } else {
-      DrawKudzu(framebuffer);
+      if (show_background) {
+        DrawBackgroundColors(framebuffer);
+      }
+      DrawKudzu(framebuffer, x_scale_offset, y_scale_offset);
       DrawGreeting(framebuffer, screen);
 
       // Draw button
