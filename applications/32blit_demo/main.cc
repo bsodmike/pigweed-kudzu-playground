@@ -11,6 +11,7 @@
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations under
 // the License.
+#include <chrono>
 #include <cstdint>
 
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
@@ -56,27 +57,27 @@ void rain_generate(test_particle& p, blit::Surface screen) {
   p.generated = true;
 };
 
-void rain(blit::Surface screen, uint32_t time_ms, blit::Rect floor_position) {
+void rain(blit::Surface screen,
+          pw::chrono::SystemClock::duration elapsed_time,
+          blit::Rect floor_position) {
   static test_particle s[300];
   static int generate_index = 0;
-  static uint32_t last_time_ms = time_ms;
 
-  int elapsed_ms = time_ms - last_time_ms;
-  float td = (elapsed_ms) / 1000.0f;
+  // Convert to fractional elapsed seconds.
+  auto const elapsed_seconds =
+      std::chrono::duration_cast<std::chrono::duration<float>>(elapsed_time);
 
   rain_generate(s[generate_index++], screen);
   if (generate_index >= 300)
     generate_index = 0;
 
-  float w = sinf(time_ms / 1000.0f) * 0.05f;
-
   blit::Vec2 gvec = blit::Vec2(0, 9.8 * 5);
-  blit::Vec2 gravity = gvec * td;
+  blit::Vec2 gravity = gvec * elapsed_seconds.count();
 
   for (auto& p : s) {
     if (p.generated) {
       p.vel += gravity;
-      p.pos += p.vel * td;
+      p.pos += p.vel * elapsed_seconds.count();
 
       int floor = -3;
       if (p.pos.x > floor_position.x &&
@@ -106,8 +107,6 @@ void rain(blit::Surface screen, uint32_t time_ms, blit::Rect floor_position) {
       screen.pixel(p.pos + blit::Point(0, screen.bounds.h + 2));
     }
   }
-
-  last_time_ms = time_ms;
 };
 
 void MainTask(void*) {
@@ -130,8 +129,6 @@ void MainTask(void*) {
 
   display.ReleaseFramebuffer(std::move(framebuffer));
 
-  uint32_t delta_screen_draw = 0;
-
   // The display loop.
   while (1) {
     frame_counter.StartFrame();
@@ -152,11 +149,11 @@ void MainTask(void*) {
         blit::Point((screen.bounds.w / 2) - (text_size.w / 2),
                     (screen.bounds.h * .75) - (text_size.h / 2)),
         text_size);
-    rain(screen, frame_counter.start - delta_screen_draw, text_rect);
+
+    rain(screen, frame_counter.LastFrameDuration(), text_rect);
     screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
     screen.text(
         text, blit::minimal_font, text_rect, true, blit::TextAlign::top_left);
-    delta_screen_draw = pw::spin_delay::Millis() - frame_counter.start;
 
     // Update timers
     frame_counter.EndDraw();
@@ -165,7 +162,7 @@ void MainTask(void*) {
     frame_counter.EndFlush();
 
     // Every second make a log message.
-    frame_counter.EndFrame();
+    frame_counter.LogTiming();
   }
 }
 

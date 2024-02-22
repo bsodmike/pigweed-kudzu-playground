@@ -424,7 +424,7 @@ void MainTask(void*) {
     frame_counter.EndFlush();
 
     // Every second make a log message.
-    frame_counter.EndFrame();
+    frame_counter.LogTiming();
   }
 }
 

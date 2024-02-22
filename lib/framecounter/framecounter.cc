@@ -1,4 +1,20 @@
+// Copyright 2024 The Pigweed Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy of
+// the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
 #include "libkudzu/framecounter.h"
+
+#include <chrono>
 
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 #define PW_LOG_MODULE_NAME "FrameCounter"
@@ -6,45 +22,56 @@
 #include <cstdint>
 #include <cstring>
 
+#include "pw_chrono/system_clock.h"
 #include "pw_log/log.h"
 #include "pw_ring_buffer/prefixed_entry_ring_buffer.h"
-#include "pw_spin_delay/delay.h"
+
+using namespace std::chrono_literals;
 
 namespace kudzu {
 
 FrameCounter::FrameCounter() {
-  frame_start_millis = pw::spin_delay::Millis();
-  frames = 0;
+  second_counter_start = pw::chrono::SystemClock::now();
+  frame_count = 0;
   frames_per_second = 0;
   draw_times.SetBuffer(draw_buffer);
   flush_times.SetBuffer(flush_buffer);
 }
 
-// TODO(b/304282368): Switch to pw_chrono and delete pw_spin_delay
-void FrameCounter::StartFrame() { start = pw::spin_delay::Millis(); }
+void FrameCounter::StartFrame() {
+  frame_start = pw::chrono::SystemClock::now();
+}
 
 void FrameCounter::EndDraw() {
-  uint32_t end = pw::spin_delay::Millis();
-  uint32_t time = end - start;
-  draw_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
-  start = end;
+  draw_end = pw::chrono::SystemClock::now();
+  auto draw_duration = draw_end - frame_start;
+  uint32_t elapsed_millis =
+      std::chrono::round<std::chrono::microseconds>(draw_duration).count();
+  draw_times.PushBack(
+      pw::as_bytes(pw::span{std::addressof(elapsed_millis), 1}));
 }
 
 void FrameCounter::EndFlush() {
-  uint32_t time = pw::spin_delay::Millis() - start;
-  flush_times.PushBack(pw::as_bytes(pw::span{std::addressof(time), 1}));
+  frame_end = pw::chrono::SystemClock::now();
+  last_frame_duration = frame_end - frame_start;
+  auto flush_duration = frame_end - draw_end;
+  frame_count++;
+  uint32_t elapsed_millis =
+      std::chrono::round<std::chrono::microseconds>(flush_duration).count();
+  flush_times.PushBack(
+      pw::as_bytes(pw::span{std::addressof(elapsed_millis), 1}));
 }
 
-void FrameCounter::EndFrame() {
-  frames++;
-  if (pw::spin_delay::Millis() > frame_start_millis + 1000) {
-    frames_per_second = frames;
-    frames = 0;
-    PW_LOG_INFO("FPS:%d, Draw:%dms, Flush:%dms",
+void FrameCounter::LogTiming() {
+  if (frame_end - second_counter_start >
+      pw::chrono::SystemClock::for_at_least(1000ms)) {
+    frames_per_second = frame_count;
+    frame_count = 0;
+    PW_LOG_INFO("FPS:%d, Draw:%dus, Flush:%dus",
                 frames_per_second,
                 (int)CalcAverageUint32Value(draw_times),
                 (int)CalcAverageUint32Value(flush_times));
-    frame_start_millis = pw::spin_delay::Millis();
+    second_counter_start = pw::chrono::SystemClock::now();
   }
 }
 

@@ -25,8 +25,8 @@ pw_source_set("framecounter") {
   public = [ "public/libkudzu/framecounter.h" ]
   public_deps = [ "$dir_pw_ring_buffer" ]
   deps = [
+    "$dir_pw_chrono:system_clock",
     "$dir_pw_log",
-    "$dir_pw_spin_delay",
   ]
   sources = [ "framecounter.cc" ]
 }

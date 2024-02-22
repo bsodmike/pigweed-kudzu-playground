@@ -111,7 +111,7 @@ void MainTask(void*) {
     display.ReleaseFramebuffer(std::move(framebuffer));
     frame_counter.EndFlush();
 
-    frame_counter.EndFrame();
+    frame_counter.LogTiming();
 
     pw::spin_delay::WaitMillis(kWaitMillis);
 

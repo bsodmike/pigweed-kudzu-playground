@@ -363,7 +363,7 @@ void MainTask(void*) {
     frame_counter.EndFlush();
 
     // Every second make a log message.
-    frame_counter.EndFrame();
+    frame_counter.LogTiming();
 
     if (pw::spin_delay::Millis() > frame_start_millis + 10000) {
       Common::EndOfFrameCallback();
