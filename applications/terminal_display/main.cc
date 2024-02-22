@@ -38,7 +38,6 @@
 #include "pw_math/vector2.h"
 #include "pw_math/vector3.h"
 #include "pw_ring_buffer/prefixed_entry_ring_buffer.h"
-#include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
 #include "pw_system/target_hooks.h"

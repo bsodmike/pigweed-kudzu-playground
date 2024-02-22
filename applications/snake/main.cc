@@ -24,7 +24,6 @@
 #include "pw_display/display.h"
 #include "pw_framebuffer/framebuffer.h"
 #include "pw_log/log.h"
-#include "pw_spin_delay/delay.h"
 #include "pw_system/target_hooks.h"
 #include "pw_system/work_queue.h"
 #include "pw_thread/detached_thread.h"
@@ -34,9 +33,6 @@
 #include "snake/game.h"
 
 namespace {
-
-constexpr uint32_t kFramesPerSecond = 16;
-constexpr uint32_t kWaitMillis = 1000 / kFramesPerSecond;
 
 class PollingTouchButtonsThread : public pw::thread::ThreadCore {
  public:
@@ -52,7 +48,6 @@ class PollingTouchButtonsThread : public pw::thread::ThreadCore {
     while (true) {
       pw::touchscreen::TouchEvent touch_event = touchscreen_.GetTouchPoint();
       buttons_.OnTouchEvent(touch_event);
-      pw::spin_delay::WaitMillis(kWaitMillis);
     }
   }
 
@@ -90,7 +85,6 @@ void MainTask(void*) {
 
   // Display and app loop.
   kudzu::FrameCounter frame_counter = kudzu::FrameCounter();
-  uint32_t last_report_time = pw::spin_delay::Millis();
   while (true) {
     frame_counter.StartFrame();
 
@@ -112,14 +106,6 @@ void MainTask(void*) {
     frame_counter.EndFlush();
 
     frame_counter.LogTiming();
-
-    pw::spin_delay::WaitMillis(kWaitMillis);
-
-    // Periodically make a log message.
-    if (pw::spin_delay::Millis() > last_report_time + 10000) {
-      Common::EndOfFrameCallback();
-      last_report_time = pw::spin_delay::Millis();
-    }
   }
 }
 

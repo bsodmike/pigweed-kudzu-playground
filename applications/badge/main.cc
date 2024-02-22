@@ -40,7 +40,6 @@
 #include "pw_log/log.h"
 #include "pw_logo5x7.h"
 #include "pw_math/vector2.h"
-#include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
 #include "pw_system/target_hooks.h"
@@ -256,8 +255,6 @@ void MainTask(void*) {
 
   Buttons& kudzu_buttons = Common::GetButtons();
 
-  uint32_t frame_start_millis = pw::spin_delay::Millis();
-
   float x_scale_offset = 0.0;
   float y_scale_offset = 0.0;
   const float x_scale_increment = 0.7;
@@ -364,11 +361,6 @@ void MainTask(void*) {
 
     // Every second make a log message.
     frame_counter.LogTiming();
-
-    if (pw::spin_delay::Millis() > frame_start_millis + 10000) {
-      Common::EndOfFrameCallback();
-      frame_start_millis = pw::spin_delay::Millis();
-    }
   }
 }
 

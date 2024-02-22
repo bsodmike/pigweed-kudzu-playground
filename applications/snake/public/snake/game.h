@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <mutex>
 
+#include "pw_chrono/system_clock.h"
 #include "pw_color/colors_pico8.h"
 #include "pw_framebuffer/framebuffer.h"
 #include "pw_sync/lock_annotations.h"
@@ -83,6 +84,8 @@ class Game : public pw::touchscreen::DirectionButtonListener {
   Block fruit_;
   pw::color::color_rgb565_t fruit_color_;
   bool run_ = false;
+  pw::chrono::SystemClock::duration time_per_advance_;
+  pw::chrono::SystemClock::time_point last_advance_time_;
   pw::sync::Mutex lock_;
 };
 

@@ -19,11 +19,17 @@
 
 #include "libkudzu/random.h"
 #include "pw_assert/check.h"
+#include "pw_chrono/system_clock.h"
 #include "pw_color/colors_pico8.h"
 #include "pw_draw/draw.h"
 #include "pw_log/log.h"
 
+using namespace std::chrono_literals;
+
 namespace snake {
+
+constexpr auto kDefaultTimePerAdvance =
+    pw::chrono::SystemClock::for_at_least(60ms);
 
 Game::Game(int32_t screen_width, int32_t screen_height)
     : screen_width_(screen_width / kPixelBoxRatio),
@@ -34,7 +40,9 @@ Game::Game(int32_t screen_width, int32_t screen_height)
              Snake::Direction::kLeft),
       fruit_({.x = 0, .y = 0}),
       fruit_color_(pw::color::colors_pico8_rgb565[COLOR_BLUE]),
-      run_(false) {
+      run_(false),
+      time_per_advance_(kDefaultTimePerAdvance),
+      last_advance_time_(pw::chrono::SystemClock::now()) {
   SetNextFruitCoordinates();
 }
 
@@ -51,9 +59,11 @@ void Game::OnFrame(pw::framebuffer::Framebuffer& framebuffer) {
   }
   bool crashed = false;
   bool ate_fruit = false;
-  {
+  auto current_time = pw::chrono::SystemClock::now();
+  if (current_time > last_advance_time_ + time_per_advance_) {
     std::lock_guard lock(lock_);
     snake_.Advance(fruit_, ate_fruit, crashed);
+    last_advance_time_ = current_time;
   }
   if (crashed) {
     // TODO(cachinchilla): draw a crash.
@@ -62,6 +72,10 @@ void Game::OnFrame(pw::framebuffer::Framebuffer& framebuffer) {
   }
 
   if (ate_fruit) {
+    time_per_advance_ -= pw::chrono::SystemClock::for_at_least(5ms);
+    if (time_per_advance_.count() <= 0) {
+      time_per_advance_ = pw::chrono::SystemClock::for_at_least(0ms);
+    }
     SetNextFruitCoordinates();
   }
   Draw(framebuffer);

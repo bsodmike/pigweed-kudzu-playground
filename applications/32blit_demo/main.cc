@@ -29,7 +29,6 @@
 #include "pw_display/display.h"
 #include "pw_framebuffer/framebuffer.h"
 #include "pw_log/log.h"
-#include "pw_spin_delay/delay.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
 #include "pw_system/target_hooks.h"
