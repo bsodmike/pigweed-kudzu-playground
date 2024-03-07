@@ -126,12 +126,11 @@ pw build
 
 ### Host
 
-Run the host app and connect to it via `pw-system-console`:
+Run the host app and connect to it via `pw console`:
 
 ```sh
 ./out/gn/host_device_simulator.speed_optimized/obj/applications/badge/bin/badge & \
-  pw-system-console --socket-addr default \
-    --proto-globs third_party/pigweed/pw_rpc/echo.proto ; \
+  pw console --socket-addr default ; \
   killall badge
 ```
 
@@ -145,12 +144,18 @@ picotool reboot -f -u && \
   picotool load -x $ELF
 ```
 
-Connect with `pw-system-console`:
+Connect with `pw console`:
 
 ```sh
-pw-system-console --verbose \
+pw console --verbose \
   --baudrate 115200 \
-  --proto-globs third_party/pigweed/pw_rpc/echo.proto \
   --token-databases ./out/gn/rp2040.size_optimized/obj/applications/badge/bin/badge.elf \
   --device /dev/rp2040
+```
+
+From Python Repl window you can issue RPCs interactively:
+
+```
+>>> device.rpcs.kudzu.rpc.Kudzu.PackageTemp()
+(Status.OK, kudzu.rpc.PackageTempResponse(temp=27.60657501220703))
 ```

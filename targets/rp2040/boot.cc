@@ -14,9 +14,12 @@
 
 #include <array>
 
+#include "pw_system/rpc_server.h"
+
 #define PW_LOG_MODULE_NAME "pw_system"
 
 #include "FreeRTOS.h"
+#include "kudzu/kudzu_service_pwpb.h"
 #include "pico/stdlib.h"
 #include "pw_log/log.h"
 #include "pw_string/util.h"
@@ -66,6 +69,8 @@ void vApplicationGetIdleTaskMemory(StaticTask_t** ppxIdleTaskTCBBuffer,
   *pulIdleTaskStackSize = freertos_idle_stack.size();
 }
 
+kudzu::rpc::KudzuService kudzu_service;
+
 int main() {
   // PICO_SDK Inits
   stdio_init_all();
@@ -74,6 +79,7 @@ int main() {
   PW_LOG_INFO("pw_system main");
 
   pw::system::Init();
+  pw::system::GetRpcServer().RegisterService(kudzu_service);
   vTaskStartScheduler();
   PW_UNREACHABLE;
 }

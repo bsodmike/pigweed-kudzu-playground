@@ -69,7 +69,7 @@ pw_python_venv("kudzu_build_venv") {
 # single super Python package for installation into the bootstrapped virtual
 # environment.
 pw_python_distribution("kudzu_python_distribution") {
-  packages = _pigweed_python_packages
+  packages = _all_python_packages
   generate_setup_cfg = {
     name = "kudzu-dist"
     version = "0.0.1"

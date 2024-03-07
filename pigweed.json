@@ -23,7 +23,7 @@
           "function": "main"
         },
         "console": {
-          "module": "pw_system.console",
+          "module": "kudzu_tools.console",
           "function": "main"
         },
         "package": {

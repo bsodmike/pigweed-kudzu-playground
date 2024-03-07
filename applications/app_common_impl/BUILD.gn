@@ -61,6 +61,7 @@ config("rp2040_i2c_flags") {
 _pico_common_deps = [
   "$PICO_ROOT/src/common/pico_base",
   "$PICO_ROOT/src/common/pico_stdlib",
+  "$PICO_ROOT/src/rp2_common/hardware_adc",
   "$PICO_ROOT/src/rp2_common/hardware_pwm",
   "$PICO_ROOT/src/rp2_common/hardware_spi",
   "$PICO_ROOT/src/rp2_common/hardware_vreg",

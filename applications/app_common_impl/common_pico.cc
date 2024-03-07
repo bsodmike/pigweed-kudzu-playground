@@ -20,6 +20,7 @@
 
 #include "FreeRTOS.h"
 #include "ft6236/device.h"
+#include "hardware/adc.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include "hardware/vreg.h"
@@ -304,6 +305,8 @@ Status Common::Init() {
   sleep_ms(10);
   set_sys_clock_khz(250000, false);
 #endif
+
+  adc_init();
 
   ConfigStatusRgb();
   // Set to a dim pink.

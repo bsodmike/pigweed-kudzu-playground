@@ -24,12 +24,19 @@ pw_python_package("tools") {
   sources = [
     "kudzu_tools/__init__.py",
     "kudzu_tools/build_project.py",
+    "kudzu_tools/console.py",
     "kudzu_tools/presubmit_checks.py",
   ]
   python_deps = [
     "$dir_pw_build/py",
     "$dir_pw_cli/py",
     "$dir_pw_presubmit/py",
+    "$dir_pw_protobuf:common_protos.python",
+    "$dir_pw_rpc:protos.python",
+    "$dir_pw_system/py",
+
+    # RPC protos to include for console interaction.
+    "//lib/rpc:protos.python",
   ]
   pylintrc = "$dir_pigweed/.pylintrc"
 }
