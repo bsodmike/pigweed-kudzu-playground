@@ -63,7 +63,7 @@ PIGWEED_ROOT = PROJECT_ROOT / 'third_party' / 'pigweed'
 default_build = build.GnGenNinja(
     name='default_build',
     doc='',
-    ninja_targets=('default', ),
+    ninja_targets=('default',),
 )
 
 
@@ -75,7 +75,8 @@ def check_for_git_changes(ctx: PresubmitContext):
         _LOG.error('There are uncommitted changes in the %s repo!', repo.name)
     if changes:
         _LOG.warning(
-            'Commit or stash pending changes before running the presubmit.')
+            'Commit or stash pending changes before running the presubmit.'
+        )
         raise PresubmitFailure
 
 
@@ -88,12 +89,13 @@ PATH_EXCLUSIONS = (
 #
 # Presubmit check programs
 #
-OTHER_CHECKS = (build.gn_gen_check, )
+OTHER_CHECKS = (build.gn_gen_check,)
 
 QUICK = (
     default_build,
     format_code.presubmit_checks(
-        code_formats=format_code.CODE_FORMATS_WITH_BLACK),
+        code_formats=format_code.CODE_FORMATS_WITH_BLACK
+    ),
 )
 
 LINTFORMAT = (
@@ -113,7 +115,7 @@ FULL = (
     python_checks.gn_python_check,
 )
 
-CI_CQ = (default_build, )
+CI_CQ = (default_build,)
 
 PROGRAMS = pw_presubmit.Programs(
     # keep-sorted: start
@@ -147,10 +149,9 @@ def run(install: bool, exclude: list, **presubmit_args) -> int:
 
     exclude.extend(PATH_EXCLUSIONS)
     repos = git_repo.discover_submodules(superproject_dir=PROJECT_ROOT)
-    return cli.run(root=PROJECT_ROOT,
-                   repositories=repos,
-                   exclude=exclude,
-                   **presubmit_args)
+    return cli.run(
+        root=PROJECT_ROOT, repositories=repos, exclude=exclude, **presubmit_args
+    )
 
 
 def main() -> int:
