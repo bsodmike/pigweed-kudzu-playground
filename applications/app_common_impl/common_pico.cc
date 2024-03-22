@@ -22,6 +22,7 @@
 #include "ft6236/device.h"
 #include "hardware/adc.h"
 #include "hardware/gpio.h"
+#include "hardware/i2c.h"
 #include "hardware/pwm.h"
 #include "hardware/vreg.h"
 #include "icm42670p/device.h"
@@ -233,20 +234,18 @@ SpiValues::SpiValues(pw::spi::Config config,
       borrowable_initiator(initiator, initiator_mutex),
       device(borrowable_initiator, config, selector) {}
 
-constexpr pw::i2c::PicoInitiator::Config ki2c0Config{
-    .i2c_block = 0,
-    .baud_rate_bps = 400'000,
+constexpr pw::i2c::Rp2040Initiator::Config ki2c0Config{
+    .clock_frequency = 400'000,
     .sda_pin = I2C_BUS0_SDA,
     .scl_pin = I2C_BUS0_SCL,
 };
-constexpr pw::i2c::PicoInitiator::Config ki2c1Config{
-    .i2c_block = 1,
-    .baud_rate_bps = 400'000,
+constexpr pw::i2c::Rp2040Initiator::Config ki2c1Config{
+    .clock_frequency = 400'000,
     .sda_pin = I2C_BUS1_SDA,
     .scl_pin = I2C_BUS1_SCL,
 };
-pw::i2c::PicoInitiator i2c0_bus(ki2c0Config);
-pw::i2c::PicoInitiator i2c1_bus(ki2c1Config);
+pw::i2c::Rp2040Initiator i2c0_bus(ki2c0Config, i2c0);
+pw::i2c::Rp2040Initiator i2c1_bus(ki2c1Config, i2c1);
 
 pw::pi4ioe5v6416::Device io_expander(i2c1_bus);
 kudzu::icm42670p::Device imu(i2c0_bus);
