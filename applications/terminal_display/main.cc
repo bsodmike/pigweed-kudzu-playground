@@ -26,7 +26,6 @@
 #include "libkudzu/framecounter.h"
 #include "pw_assert/assert.h"
 #include "pw_assert/check.h"
-#include "pw_board_led/led.h"
 #include "pw_color/color.h"
 #include "pw_color/colors_endesga32.h"
 #include "pw_color/colors_pico8.h"
@@ -392,7 +391,6 @@ void MainTask(void*) {
   // TODO(tonymd): Is there a way to hook this up outside of log_basic?
   // pw::log_basic::SetOutput(LogCallback);
 
-  pw::board_led::Init();
   PW_CHECK_OK(Common::Init());
 
   Display& display = Common::GetDisplay();

@@ -34,7 +34,6 @@ pw_executable("badge") {
     "pw_logo5x7.h",
   ]
   deps = [
-    "$dir_pw_board_led",
     "$dir_pw_color",
     "$dir_pw_display",
     "$dir_pw_draw",

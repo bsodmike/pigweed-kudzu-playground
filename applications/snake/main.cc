@@ -20,7 +20,6 @@
 #include "graphics/surface.hpp"
 #include "libkudzu/framecounter.h"
 #include "pw_assert/check.h"
-#include "pw_board_led/led.h"
 #include "pw_display/display.h"
 #include "pw_framebuffer/framebuffer.h"
 #include "pw_log/log.h"
@@ -57,7 +56,6 @@ class PollingTouchButtonsThread : public pw::thread::ThreadCore {
 };
 
 void MainTask(void*) {
-  pw::board_led::Init();
   PW_CHECK_OK(Common::Init());
 
   pw::display::Display& display = Common::GetDisplay();
