@@ -27,9 +27,9 @@ pw_facade("app_common") {
   backend = app_common_BACKEND
   public_configs = [ ":public_includes" ]
   public_deps = [
-    "$dir_pw_display",
     "$dir_pw_status",
     "$dir_pw_thread:thread",
+    "$dir_pwexperimental_display",
     "//lib/kudzu_buttons",
     "//lib/kudzu_imu",
     "//lib/pw_touchscreen",

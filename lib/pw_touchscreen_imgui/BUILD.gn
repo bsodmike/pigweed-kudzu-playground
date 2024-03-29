@@ -26,9 +26,9 @@ pw_source_set("pw_touchscreen_imgui") {
   deps = [
     "$dir_pigweed_experimental/third_party/glfw",
     "$dir_pigweed_experimental/third_party/imgui",
-    "$dir_pw_display_driver_imgui",
     "$dir_pw_log",
     "$dir_pw_result",
+    "$dir_pwexperimental_display_driver_imgui",
     "//lib/pw_touchscreen:pw_touchscreen",
   ]
   sources = [ "touchscreen.cc" ]

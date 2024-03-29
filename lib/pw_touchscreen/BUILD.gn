@@ -24,8 +24,8 @@ pw_source_set("pw_touchscreen") {
   public_configs = [ ":public_includes" ]
   public = [ "public/pw_touchscreen/touchscreen.h" ]
   public_deps = [
-    "$dir_pw_math",
     "$dir_pw_status",
+    "$dir_pwexperimental_math",
   ]
 }
 

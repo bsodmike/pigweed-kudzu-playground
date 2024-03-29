@@ -34,10 +34,6 @@ pw_executable("badge") {
     "pw_logo5x7.h",
   ]
   deps = [
-    "$dir_pw_color",
-    "$dir_pw_display",
-    "$dir_pw_draw",
-    "$dir_pw_framebuffer",
     "$dir_pw_log",
     "$dir_pw_random",
     "$dir_pw_ring_buffer",
@@ -45,6 +41,10 @@ pw_executable("badge") {
     "$dir_pw_sys_io",
     "$dir_pw_system:target_hooks",
     "$dir_pw_thread:thread",
+    "$dir_pwexperimental_color",
+    "$dir_pwexperimental_display",
+    "$dir_pwexperimental_draw",
+    "$dir_pwexperimental_framebuffer",
     "$pw_dir_third_party_32blit:32blit",
     "//applications/app_common",
     "//lib/framecounter",

@@ -26,8 +26,8 @@ pw_source_set("kudzu_buttons_imgui") {
   deps = [
     "$dir_pigweed_experimental/third_party/glfw",
     "$dir_pigweed_experimental/third_party/imgui",
-    "$dir_pw_display_driver_imgui",
     "$dir_pw_log",
+    "$dir_pwexperimental_display_driver_imgui",
     "//lib/kudzu_buttons:kudzu_buttons",
   ]
   sources = [ "buttons.cc" ]

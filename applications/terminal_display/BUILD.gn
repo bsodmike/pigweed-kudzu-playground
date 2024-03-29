@@ -24,9 +24,9 @@ group("all") {
 
 pw_source_set("text_buffer") {
   public_deps = [
-    "$dir_pw_color",
-    "$dir_pw_math",
     "$dir_pw_result",
+    "$dir_pwexperimental_color",
+    "$dir_pwexperimental_math",
   ]
   sources = [
     "text_buffer.cc",
@@ -38,18 +38,18 @@ pw_executable("terminal_demo") {
   sources = [ "main.cc" ]
   deps = [
     ":text_buffer",
-    "$dir_pw_color",
     "$dir_pw_containers:vector",
-    "$dir_pw_display",
-    "$dir_pw_draw",
-    "$dir_pw_framebuffer",
     "$dir_pw_log",
-    "$dir_pw_math",
     "$dir_pw_random",
     "$dir_pw_string",
     "$dir_pw_sys_io",
     "$dir_pw_system:target_hooks",
     "$dir_pw_thread:thread",
+    "$dir_pwexperimental_color",
+    "$dir_pwexperimental_display",
+    "$dir_pwexperimental_draw",
+    "$dir_pwexperimental_framebuffer",
+    "$dir_pwexperimental_math",
     "//applications/app_common",
     "//lib/framecounter",
     "//lib/pw_touchscreen",
@@ -68,8 +68,8 @@ pw_executable("terminal_demo") {
 pw_test("text_buffer_test") {
   deps = [
     ":text_buffer",
-    "$dir_pw_color",
     "$dir_pw_unit_test",
+    "$dir_pwexperimental_color",
   ]
   sources = [ "text_buffer_test.cc" ]
 }

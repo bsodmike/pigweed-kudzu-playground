@@ -47,17 +47,17 @@ pw_source_set("game") {
   sources = [ "game.cc" ]
   public_deps = [
     ":snake",
-    "$dir_pw_color",
-    "$dir_pw_framebuffer",
+    "$dir_pwexperimental_color",
+    "$dir_pwexperimental_framebuffer",
     "//lib/pw_touchscreen:buttons",
   ]
   deps = [
     "$dir_pw_assert",
     "$dir_pw_chrono:system_clock",
-    "$dir_pw_draw",
     "$dir_pw_log",
     "$dir_pw_sync:lock_annotations",
     "$dir_pw_sync:mutex",
+    "$dir_pwexperimental_draw",
     "//lib/random",
   ]
 }
@@ -67,12 +67,12 @@ pw_executable("app") {
   deps = [
     ":game",
     "$dir_pw_chrono:system_clock",
-    "$dir_pw_display",
-    "$dir_pw_framebuffer",
     "$dir_pw_log",
     "$dir_pw_system:target_hooks",
     "$dir_pw_system:work_queue",
     "$dir_pw_thread:thread",
+    "$dir_pwexperimental_display",
+    "$dir_pwexperimental_framebuffer",
     "$pw_dir_third_party_32blit:32blit",
     "//applications/app_common",
     "//lib/framecounter",
