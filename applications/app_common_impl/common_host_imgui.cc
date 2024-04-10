@@ -35,7 +35,7 @@ using Buttons = kudzu::ButtonsImgui;
 namespace {
 
 constexpr uint16_t kDisplayScaleFactor = 2;
-constexpr pw::math::Size<uint16_t> kFramebufferDimensions = {
+constexpr pw::geometry::Size<uint16_t> kFramebufferDimensions = {
     .width = DISPLAY_WIDTH / kDisplayScaleFactor,
     .height = DISPLAY_HEIGHT / kDisplayScaleFactor,
 };
@@ -43,8 +43,8 @@ constexpr size_t kNumPixels =
     kFramebufferDimensions.width * kFramebufferDimensions.height;
 constexpr uint16_t kFramebufferRowBytes =
     sizeof(color_rgb565_t) * kFramebufferDimensions.width;
-constexpr pw::math::Size<uint16_t> kDisplaySize = {DISPLAY_WIDTH,
-                                                   DISPLAY_HEIGHT};
+constexpr pw::geometry::Size<uint16_t> kDisplaySize = {DISPLAY_WIDTH,
+                                                       DISPLAY_HEIGHT};
 
 color_rgb565_t s_pixel_data[kNumPixels];
 const pw::Vector<void*, 1> s_pixel_buffers{s_pixel_data};

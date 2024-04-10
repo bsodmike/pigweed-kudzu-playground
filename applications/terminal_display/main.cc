@@ -30,12 +30,13 @@
 #include "pw_color/colors_endesga32.h"
 #include "pw_color/colors_pico8.h"
 #include "pw_draw/draw.h"
+#include "pw_draw/font6x8.h"
 #include "pw_draw/font_set.h"
 #include "pw_draw/pigweed_farm.h"
 #include "pw_framebuffer/framebuffer.h"
+#include "pw_geometry/vector2.h"
+#include "pw_geometry/vector3.h"
 #include "pw_log/log.h"
-#include "pw_math/vector2.h"
-#include "pw_math/vector3.h"
 #include "pw_ring_buffer/prefixed_entry_ring_buffer.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
@@ -45,12 +46,12 @@
 #include "text_buffer.h"
 
 using pw::color::color_rgb565_t;
-using pw::color::colors_pico8_rgb565;
+using pw::color::kColorsPico8Rgb565;
 using pw::display::Display;
 using pw::draw::FontSet;
 using pw::framebuffer::Framebuffer;
-using pw::math::Size;
-using pw::math::Vector2;
+using pw::geometry::Size;
+using pw::geometry::Vector2;
 
 namespace {
 
@@ -64,10 +65,10 @@ class DemoDecoder : public AnsiDecoder {
 
  protected:
   void SetFgColor(uint8_t r, uint8_t g, uint8_t b) override {
-    fg_color_ = pw::color::ColorRGBA(r, g, b).ToRgb565();
+    fg_color_ = pw::color::ColorRgba(r, g, b).ToRgb565();
   }
   void SetBgColor(uint8_t r, uint8_t g, uint8_t b) override {
-    bg_color_ = pw::color::ColorRGBA(r, g, b).ToRgb565();
+    bg_color_ = pw::color::ColorRgba(r, g, b).ToRgb565();
   }
   void EmitChar(char c) override {
     log_text_buffer_.DrawCharacter(TextBuffer::Char{c, fg_color_, bg_color_});
@@ -116,8 +117,8 @@ void DrawButton(const Button& button,
                        /*filled=*/true);
   constexpr int kMargin = 2;
   Vector2<int> tl{button.tl_.x + kMargin, button.tl_.y + kMargin};
-  DrawString(
-      button.label_, tl, kBlack, bg_color, pw::draw::font6x8, framebuffer);
+  pw::draw::DrawString(
+      button.label_, tl, kBlack, bg_color, pw::draw::GetFont6x8(), framebuffer);
 }
 
 // Draw a font sheet starting at the given top-left screen coordinates.
@@ -200,7 +201,7 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
   //     sprite_pos_y - border_size,
   //     pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
   //     pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
-  //     colors_pico8_rgb565[COLOR_DARK_BLUE],
+  //     kColorsPico8Rgb565[pw::color::kColorDarkBlue],
   //     true);
 
   // // Shrink the border
@@ -213,7 +214,7 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
   //     sprite_pos_y - border_size,
   //     pigweed_farm_sprite_sheet.width * sprite_scale + (border_size * 2),
   //     pigweed_farm_sprite_sheet.height * sprite_scale + (border_size * 2),
-  //     colors_pico8_rgb565[COLOR_BLUE],
+  //     kColorsPico8Rgb565[pw::color::kColorBlue],
   //     true);
 
   static Vector2<int> sun_offset;
@@ -236,7 +237,7 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
                            32,
                        sun_offset.y + sprite_pos_y,
                        20,
-                       colors_pico8_rgb565[COLOR_ORANGE],
+                       kColorsPico8Rgb565[pw::color::kColorOrange],
                        true);
   pw::draw::DrawCircle(framebuffer,
                        sun_offset.x + sprite_pos_x +
@@ -244,7 +245,7 @@ int DrawPigweedSprite(Framebuffer& framebuffer) {
                            32,
                        sun_offset.y + sprite_pos_y,
                        18,
-                       colors_pico8_rgb565[COLOR_YELLOW],
+                       kColorsPico8Rgb565[pw::color::kColorYellow],
                        true);
 
   // // Draw the farm sprite's shadow
@@ -275,17 +276,19 @@ int DrawPigweedBanner(Vector2<int> tl, Framebuffer& framebuffer) {
       L" ▒█▀     ░█░ ▓█   █▓ ░█░ █ ▒█  ▒█   ▄  ▒█   ▄  ░█  ▄█▌",
       L" ▒█      ░█░ ░▓███▀   ▒█▓▀▓█░ ░▓████▒ ░▓████▒ ▒▓████▀"};
 
+  auto box_font = pw::draw::GetFont6x8BoxChars();
   // Draw the Pigweed "ASCII" banner.
   for (auto text_row : pigweed_banner) {
-    Size<int> string_dims = DrawString(text_row,
-                                       tl,
-                                       colors_pico8_rgb565[COLOR_PINK],
-                                       kBlack,
-                                       pw::draw::font6x8_box_chars,
-                                       framebuffer);
+    Size<int> string_dims =
+        pw::draw::DrawString(text_row,
+                             tl,
+                             kColorsPico8Rgb565[pw::color::kColorOrange],
+                             kBlack,
+                             box_font,
+                             framebuffer);
     tl.y += string_dims.height;
   }
-  return tl.y - pw::draw::font6x8_box_chars.height;
+  return tl.y - box_font.height;
 }
 
 // Draw the font sheets.
@@ -294,40 +297,41 @@ int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
   constexpr int kFontSheetVerticalPadding = 4;
   constexpr int kFontSheetNumColumns = 26;
 
+  auto font = pw::draw::GetFont6x8BoxChars();
   int initial_x = tl.x;
   tl = DrawColorFontSheet(tl,
                           kFontSheetNumColumns,
                           /*fg_color=*/kBlack,
-                          pw::draw::font6x8,
+                          font,
                           framebuffer);
 
   tl.x = initial_x;
-  tl.y -= pw::draw::font6x8.height;
+  tl.y -= font.height;
   tl.y += kFontSheetVerticalPadding;
 
   tl = DrawTestFontSheet(tl,
                          kFontSheetNumColumns,
                          /*fg_color=*/kWhite,
                          /*bg_color=*/kBlack,
-                         pw::draw::font6x8,
+                         font,
                          framebuffer);
 
   tl.x = initial_x;
   tl.y += kFontSheetVerticalPadding;
 
-  Size<int> string_dims = DrawString(L"Box Characters:",
-                                     tl,
-                                     /*fg_color=*/kWhite,
-                                     /*bg_color=*/kBlack,
-                                     pw::draw::font6x8,
-                                     framebuffer);
+  Size<int> string_dims = pw::draw::DrawString(L"Box Characters:",
+                                               tl,
+                                               /*fg_color=*/kWhite,
+                                               /*bg_color=*/kBlack,
+                                               font,
+                                               framebuffer);
   tl.x = 0;
 
   tl = DrawTestFontSheet(tl,
                          kFontSheetNumColumns,
                          /*fg_color=*/kWhite,
                          /*bg_color=*/kBlack,
-                         pw::draw::font6x8_box_chars,
+                         font,
                          framebuffer);
   return tl.y;
 }
@@ -336,7 +340,8 @@ int DrawFontSheets(Vector2<int> tl, Framebuffer& framebuffer) {
 // Return the height (in pixels) of the header.
 int DrawHeader(Framebuffer& framebuffer) {
   // DrawButton(
-  //     g_button, /*bg_color=*/colors_pico8_rgb565[COLOR_BLUE], framebuffer);
+  //     g_button, /*bg_color=*/kColorsPico8Rgb565[pw::color::kColorBlue],
+  //     framebuffer);
   Vector2<int> tl = {0, 0};
   tl.y = DrawPigweedSprite(framebuffer);
 
@@ -374,7 +379,7 @@ void DrawFrame(Framebuffer& framebuffer) {
   constexpr int kHeaderMargin = 4;
   int header_bottom = DrawHeader(framebuffer);
   DrawLogTextBuffer(
-      header_bottom + kHeaderMargin, pw::draw::font6x8, framebuffer);
+      header_bottom + kHeaderMargin, pw::draw::GetFont6x8(), framebuffer);
 }
 
 void CreateDemoLogMessages() {
@@ -399,7 +404,7 @@ void MainTask(void*) {
 
   pw::draw::Fill(framebuffer, kBlack);
 
-  pw::math::Vector3<int> last_frame_touch_state(0, 0, 0);
+  pw::geometry::Vector3<int> last_frame_touch_state(0, 0, 0);
 
   DrawFrame(framebuffer);
   // Push the frame buffer to the screen.

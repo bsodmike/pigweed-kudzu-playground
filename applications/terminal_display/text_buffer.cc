@@ -15,7 +15,7 @@
 #include "text_buffer.h"
 
 using pw::color::color_rgb565_t;
-using pw::math::Vector2;
+using pw::geometry::Vector2;
 
 namespace {
 constexpr int kMaxColIdx = kNumCharsWide - 1;

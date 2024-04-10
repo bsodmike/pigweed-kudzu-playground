@@ -35,10 +35,11 @@
 #include "pw_color/colors_pico8.h"
 #include "pw_display/display.h"
 #include "pw_draw/draw.h"
+#include "pw_draw/font6x8.h"
 #include "pw_framebuffer/framebuffer.h"
+#include "pw_geometry/vector2.h"
 #include "pw_log/log.h"
 #include "pw_logo5x7.h"
-#include "pw_math/vector2.h"
 #include "pw_string/string_builder.h"
 #include "pw_sys_io/sys_io.h"
 #include "pw_system/target_hooks.h"
@@ -47,11 +48,11 @@
 
 using kudzu::Buttons;
 using pw::color::color_rgb565_t;
-using pw::color::colors_pico8_rgb565;
+using pw::color::kColorsPico8Rgb565;
 using pw::display::Display;
 using pw::framebuffer::Framebuffer;
-using pw::math::Size;
-using pw::math::Vector2;
+using pw::geometry::Size;
+using pw::geometry::Vector2;
 using pw::touchscreen::Touchscreen;
 
 namespace {
@@ -70,6 +71,7 @@ void DrawTextBanner(Framebuffer& framebuffer) {
   constexpr std::array<std::wstring_view, 2> banner = {
       L"Hello World from KUDZU!",
   };
+  auto font = pw::draw::GetFont6x8();
 
   Vector2<int> tl = {12, 32};
 
@@ -77,7 +79,7 @@ void DrawTextBanner(Framebuffer& framebuffer) {
   const float y_scale = 4.0;
   const float x_scale = 1.0;
   const float max_x_offset = 4.0;
-  const float max_y_offset = pw::draw::font6x8.height * 2.0;
+  const float max_y_offset = font.height * 2.0;
 
   for (auto text_row : banner) {
     int column = 0;
@@ -98,9 +100,9 @@ void DrawTextBanner(Framebuffer& framebuffer) {
 
       pw::draw::DrawCharacter(text_char,
                               position,
-                              colors_pico8_rgb565[color_index + 8],
+                              kColorsPico8Rgb565[color_index + 8],
                               0,
-                              pw::draw::font6x8,
+                              font,
                               framebuffer);
 
       if (text_char != ' ') {
@@ -116,11 +118,11 @@ void DrawTextBanner(Framebuffer& framebuffer) {
         color_index = (color_index + 1) % 7;
       }
 
-      tl.x += pw::draw::font6x8.width;
+      tl.x += font.width;
       column += 1;
     }
     tl.x = 0;
-    tl.y += pw::draw::font6x8.height;
+    tl.y += font.height;
   }
 }
 
@@ -335,7 +337,7 @@ void MainTask(void*) {
                            touch_event.point.x,
                            touch_event.point.y,
                            18,
-                           colors_pico8_rgb565[COLOR_BLUE],
+                           kColorsPico8Rgb565[pw::color::kColorBlue],
                            false);
     }
     if (last_touch_event.type == pw::touchscreen::TouchEventType::Drag &&

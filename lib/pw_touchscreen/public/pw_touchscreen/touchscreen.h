@@ -13,7 +13,7 @@
 // the License.
 #pragma once
 
-#include "pw_math/vector3.h"
+#include "pw_geometry/vector3.h"
 #include "pw_status/status.h"
 
 namespace pw::touchscreen {
@@ -27,7 +27,7 @@ enum TouchEventType {
 
 struct TouchEvent {
   TouchEventType type = TouchEventType::None;
-  pw::math::Vector3<int> point = {0, 0, 0};
+  pw::geometry::Vector3<int> point = {0, 0, 0};
 };
 
 class Touchscreen {

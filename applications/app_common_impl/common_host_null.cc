@@ -28,8 +28,8 @@ using Buttons = kudzu::ButtonsNull;
 
 namespace {
 
-constexpr pw::math::Size<uint16_t> kDisplaySize = {DISPLAY_WIDTH,
-                                                   DISPLAY_HEIGHT};
+constexpr pw::geometry::Size<uint16_t> kDisplaySize = {DISPLAY_WIDTH,
+                                                       DISPLAY_HEIGHT};
 
 pw::display_driver::DisplayDriverNULL s_display_driver;
 const pw::Vector<void*, 0> s_pixel_buffers;

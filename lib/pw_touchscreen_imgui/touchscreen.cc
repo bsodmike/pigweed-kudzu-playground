@@ -20,8 +20,8 @@
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "pw_display_driver_imgui/display_driver.h"
+#include "pw_geometry/vector3.h"
 #include "pw_log/log.h"
-#include "pw_math/vector3.h"
 #include "pw_status/status.h"
 
 namespace pw::touchscreen {

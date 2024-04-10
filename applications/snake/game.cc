@@ -39,7 +39,7 @@ Game::Game(int32_t screen_width, int32_t screen_height)
              /*initial_size=*/3 * kPixelBoxRatio,
              Snake::Direction::kLeft),
       fruit_({.x = 0, .y = 0}),
-      fruit_color_(pw::color::colors_pico8_rgb565[COLOR_BLUE]),
+      fruit_color_(pw::color::kColorsPico8Rgb565[pw::color::kColorBlue]),
       run_(false),
       time_per_advance_(kDefaultTimePerAdvance),
       last_advance_time_(pw::chrono::SystemClock::now()) {
@@ -99,7 +99,7 @@ void Game::Draw(pw::framebuffer::Framebuffer& framebuffer) {
                        kPixelBoxRatio * block.y,
                        kPixelBoxRatio * block.x + kPixelBoxRatio,
                        kPixelBoxRatio * block.y + kPixelBoxRatio,
-                       pw::color::colors_pico8_rgb565[COLOR_GREEN],
+                       pw::color::kColorsPico8Rgb565[pw::color::kColorGreen],
                        /*filled=*/true);
   });
 }

@@ -16,7 +16,7 @@
 
 #include <cinttypes>
 
-#include "pw_math/vector3.h"
+#include "pw_geometry/vector3.h"
 #include "pw_status/status.h"
 
 namespace pw::touchscreen {

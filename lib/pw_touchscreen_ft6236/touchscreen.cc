@@ -22,8 +22,8 @@
 #define PW_LOG_LEVEL PW_LOG_LEVEL_DEBUG
 
 #include "ft6236/device.h"
+#include "pw_geometry/vector3.h"
 #include "pw_log/log.h"
-#include "pw_math/vector3.h"
 #include "pw_touchscreen_ft6236/touchscreen.h"
 
 namespace pw::touchscreen {

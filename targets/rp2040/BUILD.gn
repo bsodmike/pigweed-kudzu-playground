@@ -73,11 +73,6 @@ pw_system_target("rp2040") {
     pw_sync_COUNTING_SEMAPHORE_BACKEND =
         "$dir_pw_sync_freertos:counting_semaphore"
 
-    # Configure backend for pw_spin_delay
-    # This is still used by pw_display_driver_st7789/display_driver.cc:
-    # https://pigweed.googlesource.com/pigweed/experimental/+/refs/heads/main/pw_display_driver_st7789/display_driver.cc#115
-    pw_spin_delay_BACKEND = "$dir_pw_spin_delay_rp2040"
-
     app_common_BACKEND = "//applications/app_common_impl:pico_st7789_pio"
 
     pw_app_common_DISPLAY_WIDTH = "320"

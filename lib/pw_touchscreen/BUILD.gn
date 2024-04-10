@@ -25,7 +25,7 @@ pw_source_set("pw_touchscreen") {
   public = [ "public/pw_touchscreen/touchscreen.h" ]
   public_deps = [
     "$dir_pw_status",
-    "$dir_pwexperimental_math",
+    "$dir_pwexperimental_geometry",
   ]
 }
 

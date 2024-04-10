@@ -34,7 +34,7 @@
 #include "pw_thread/detached_thread.h"
 
 using pw::color::color_rgb565_t;
-using pw::color::colors_pico8_rgb565;
+using pw::color::kColorsPico8Rgb565;
 using pw::display::Display;
 using pw::framebuffer::Framebuffer;
 

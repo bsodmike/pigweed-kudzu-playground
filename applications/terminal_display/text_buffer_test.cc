@@ -20,8 +20,8 @@
 using pw::color::color_rgb565_t;
 
 namespace {
-constexpr color_rgb565_t kIndigo = pw::color::colors_pico8_rgb565[13];
-constexpr color_rgb565_t kDarkGreen = pw::color::colors_pico8_rgb565[3];
+constexpr color_rgb565_t kIndigo = pw::color::kColorsPico8Rgb565[13];
+constexpr color_rgb565_t kDarkGreen = pw::color::kColorsPico8Rgb565[3];
 }  // namespace
 
 TEST(TextBufferTest, DimsAsExpected) {
