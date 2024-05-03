@@ -21,10 +21,8 @@ from pw_build.build_recipe import (
     BuildCommand,
     BuildRecipe,
 )
-from pw_build.project_builder_presubmit_runner import (
-    main,
-    should_gn_gen_with_args,
-)
+from pw_build.project_builder_presubmit_runner import main
+from pw_build.build_recipe import should_gn_gen_with_args
 from pw_presubmit.build import gn_args
 
 _LOG = logging.getLogger('pw_build')
