@@ -1,0 +1,128 @@
+# Copyright 2024 The Pigweed Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+package(default_visibility = ["//visibility:public"])
+
+constraint_value(
+    name = "host_backend_constraint_value",
+    constraint_setting = "//applications/app_common:app_common_constraint_setting",
+)
+
+constraint_value(
+    name = "rp2040_backend_constraint_value",
+    constraint_setting = "//applications/app_common:app_common_constraint_setting",
+)
+
+display_common_defines = [
+    "DISPLAY_WIDTH=320",
+    "DISPLAY_HEIGHT=240",
+    "FRAMEBUFFER_WIDTH=-1",
+    "FRAMEBUFFER_START_X=0",
+    "FRAMEBUFFER_START_Y=0",
+]
+
+rp2040_display_defines = [
+    "DISPLAY_RESET_GPIO=-1",
+    # Kudzu Pins pin assignments.
+    "DISPLAY_TE_GPIO=16",
+    "BACKLIGHT_GPIO=15",
+
+    # Pico display pack 2 pin assignments.
+    # "DISPLAY_TE_GPIO=21",
+    # "BACKLIGHT_GPIO=20",
+]
+
+rp2040_spi_defines = [
+    "SPI_MISO_GPIO=-1",
+
+    # Kudzu Pins pin assignments.
+    "DISPLAY_CS_GPIO=17",
+    "DISPLAY_DC_GPIO=20",
+    "SPI_MOSI_GPIO=19",
+    "SPI_CLOCK_GPIO=18",
+
+    # Pico display pack 2 pin assignments.
+    # "DISPLAY_CS_GPIO=17",
+    # "DISPLAY_DC_GPIO=16",
+    # "SPI_MOSI_GPIO=19",
+    # "SPI_CLOCK_GPIO=18",
+]
+
+rp2040_i2c_defines = [
+    "I2C_BUS0_SCL=9",
+    "I2C_BUS0_SDA=8",
+    "I2C_BUS1_SCL=3",
+    "I2C_BUS1_SDA=2",
+]
+
+rp2040_pio_defines = [
+    "USE_PIO=1",
+    "DISPLAY_TYPE_ST7789_PIO",
+    # Overclock the rp2040 in common_pico.cc
+    # "OVERCLOCK_250=1",
+]
+
+cc_library(
+    name = "pico_st7789_pio",
+    srcs = ["common_pico.cc"],
+    defines = display_common_defines + rp2040_display_defines + rp2040_spi_defines + rp2040_i2c_defines + rp2040_pio_defines,
+    target_compatible_with = [
+        "@pigweed//pw_build/constraints/chipset:rp2040",
+    ],
+    deps = [
+        "//applications/app_common:app_common.facade",
+        "//lib/ft6236",
+        "//lib/icm42670p",
+        "//lib/kudzu_buttons_pi4ioe5v6416",
+        "//lib/kudzu_imu_icm42670p",
+        "//lib/max17048",
+        "//lib/pi4ioe5v6416",
+        "//lib/pw_touchscreen_ft6236",
+        "@pico-sdk//src/common/pico_base",
+        "@pico-sdk//src/common/pico_stdlib",
+        "@pico-sdk//src/rp2_common/hardware_adc",
+        "@pico-sdk//src/rp2_common/hardware_gpio",
+        "@pico-sdk//src/rp2_common/hardware_pwm",
+        "@pico-sdk//src/rp2_common/hardware_spi",
+        "@pico-sdk//src/rp2_common/hardware_vreg",
+        "@pigweed-experimental//pw_display_driver_st7789",
+        "@pigweed-experimental//pw_graphics/pw_display",
+        "@pigweed-experimental//pw_graphics/pw_framebuffer_pool",
+        "@pigweed-experimental//pw_pixel_pusher_rp2040_pio",
+        "@pigweed//pw_digital_io_rp2040",
+        "@pigweed//pw_i2c_rp2040",
+        "@pigweed//pw_log",
+        "@pigweed//pw_spi:chip_selector_digital_out",
+        "@pigweed//pw_spi_rp2040",
+        "@pigweed//pw_sync:borrow",
+        "@pigweed//pw_sync:mutex",
+        "@pigweed//pw_thread:thread",
+        "@pigweed//pw_thread_freertos:thread",
+    ],
+)
+
+cc_library(
+    name = "host_null",
+    srcs = ["common_host_null.cc"],
+    defines = display_common_defines,
+    deps = [
+        "//applications/app_common:app_common.facade",
+        "//lib/kudzu_buttons_null",
+        "//lib/pw_touchscreen_null",
+        "@pigweed-experimental//pw_display_driver_null",
+        "@pigweed-experimental//pw_graphics/pw_display",
+        "@pigweed//pw_thread:thread",
+        "@pigweed//pw_thread_stl:thread",
+    ],
+)

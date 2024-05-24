@@ -12,22 +12,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import("//build_overrides/pigweed.gni")
+package(default_visibility = ["//visibility:public"])
 
-import("$dir_pw_build/target_types.gni")
-
-config("default_config") {
-  include_dirs = [ "public" ]
-}
-
-pw_source_set("framecounter") {
-  public_configs = [ ":default_config" ]
-  public = [ "public/libkudzu/framecounter.h" ]
-  public_deps = [ "$dir_pw_ring_buffer" ]
-  deps = [
-    "$dir_pw_chrono:system_clock",
-    "$dir_pw_log",
-    "$dir_pw_ring_buffer",
-  ]
-  sources = [ "framecounter.cc" ]
-}
+cc_library(
+    name = "pw_touchscreen_null",
+    srcs = ["touchscreen.cc"],
+    hdrs = ["public/pw_touchscreen_null/touchscreen.h"],
+    includes = ["public"],
+    deps = [
+        "//lib/pw_touchscreen",
+        "@pigweed//pw_status",
+    ],
+)

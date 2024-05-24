@@ -12,22 +12,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import("//build_overrides/pigweed.gni")
+package(default_visibility = ["//visibility:public"])
 
-import("$dir_pw_build/target_types.gni")
+exports_files(
+    glob(["**/*"]),
+    visibility = ["//visibility:public"],
+)
 
-config("default_config") {
-  include_dirs = [ "public" ]
-}
-
-pw_source_set("framecounter") {
-  public_configs = [ ":default_config" ]
-  public = [ "public/libkudzu/framecounter.h" ]
-  public_deps = [ "$dir_pw_ring_buffer" ]
-  deps = [
-    "$dir_pw_chrono:system_clock",
-    "$dir_pw_log",
-    "$dir_pw_ring_buffer",
-  ]
-  sources = [ "framecounter.cc" ]
-}
+cc_library(
+    name = "version_defs",
+    hdrs = ["include/version_defs.hpp"],
+    includes = ["include"],
+)

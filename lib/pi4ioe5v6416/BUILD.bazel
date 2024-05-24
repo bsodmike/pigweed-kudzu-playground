@@ -12,22 +12,18 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import("//build_overrides/pigweed.gni")
+package(default_visibility = ["//visibility:public"])
 
-import("$dir_pw_build/target_types.gni")
-
-config("default_config") {
-  include_dirs = [ "public" ]
-}
-
-pw_source_set("framecounter") {
-  public_configs = [ ":default_config" ]
-  public = [ "public/libkudzu/framecounter.h" ]
-  public_deps = [ "$dir_pw_ring_buffer" ]
-  deps = [
-    "$dir_pw_chrono:system_clock",
-    "$dir_pw_log",
-    "$dir_pw_ring_buffer",
-  ]
-  sources = [ "framecounter.cc" ]
-}
+cc_library(
+    name = "pi4ioe5v6416",
+    srcs = ["device.cc"],
+    hdrs = ["public/pi4ioe5v6416/device.h"],
+    includes = ["public"],
+    deps = [
+        "@pigweed//pw_digital_io",
+        "@pigweed//pw_i2c:initiator",
+        "@pigweed//pw_i2c:register_device",
+        "@pigweed//pw_log",
+        "@pigweed//pw_status",
+    ],
+)

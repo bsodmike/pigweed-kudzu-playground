@@ -1,4 +1,4 @@
-# Copyright 2023 The Pigweed Authors
+# Copyright 2024 The Pigweed Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -55,8 +55,8 @@ pw_system_target("rp2040") {
         get_path_info("$dir_pigweed/targets/rp2040/pico_executable.gni",
                       "abspath")
 
-    pw_log_BACKEND = dir_pw_log_string
-    pw_log_string_HANDLER_BACKEND = "$dir_pw_system:log_backend"
+    pw_log_BACKEND = dir_pw_log_tokenized
+    pw_log_tokenized_HANDLER_BACKEND = "$dir_pw_system:log_backend.impl"
 
     pw_third_party_freertos_CONFIG = "//targets/rp2040:freertos_config"
     pw_third_party_freertos_PORT = "$dir_pw_third_party/freertos:arm_cm0"
@@ -67,7 +67,7 @@ pw_system_target("rp2040") {
       "//targets/rp2040:pre_init",
       "$dir_pw_assert:impl",
       "$dir_pw_log:impl",
-      "$dir_pw_log_string:handler.impl",
+      "$dir_pigweed/targets/rp2040:float_printf_adapter",
     ]
 
     pw_sync_COUNTING_SEMAPHORE_BACKEND =

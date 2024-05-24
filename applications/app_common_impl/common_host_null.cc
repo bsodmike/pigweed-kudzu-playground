@@ -13,6 +13,7 @@
 // the License.
 #include "app_common/common.h"
 #include "kudzu_buttons_null/buttons.h"
+#include "pw_color/color.h"
 #include "pw_display/display.h"
 #include "pw_display_driver_null/display_driver.h"
 #include "pw_status/try.h"
@@ -21,6 +22,7 @@
 #include "pw_touchscreen_null/touchscreen.h"
 
 using pw::Status;
+using pw::color::color_rgb565_t;
 using pw::framebuffer::PixelFormat;
 using pw::framebuffer_pool::FramebufferPool;
 
@@ -28,17 +30,27 @@ using Buttons = kudzu::ButtonsNull;
 
 namespace {
 
+constexpr uint16_t kDisplayScaleFactor = 2;
+constexpr pw::geometry::Size<uint16_t> kFramebufferDimensions = {
+    .width = DISPLAY_WIDTH / kDisplayScaleFactor,
+    .height = DISPLAY_HEIGHT / kDisplayScaleFactor,
+};
+constexpr size_t kNumPixels =
+    kFramebufferDimensions.width * kFramebufferDimensions.height;
+constexpr uint16_t kFramebufferRowBytes =
+    sizeof(color_rgb565_t) * kFramebufferDimensions.width;
 constexpr pw::geometry::Size<uint16_t> kDisplaySize = {DISPLAY_WIDTH,
                                                        DISPLAY_HEIGHT};
 
-pw::display_driver::DisplayDriverNULL s_display_driver;
-const pw::Vector<void*, 0> s_pixel_buffers;
-pw::framebuffer_pool::FramebufferPool s_fb_pool({
+color_rgb565_t s_pixel_data[kNumPixels];
+const pw::Vector<void*, 1> s_pixel_buffers{s_pixel_data};
+FramebufferPool s_fb_pool({
     .fb_addr = s_pixel_buffers,
-    .dimensions = {0, 0},
-    .row_bytes = 0,
-    .pixel_format = PixelFormat::None,
+    .dimensions = kFramebufferDimensions,
+    .row_bytes = kFramebufferRowBytes,
+    .pixel_format = PixelFormat::RGB565,
 });
+pw::display_driver::DisplayDriverNULL s_display_driver;
 
 }  // namespace
 

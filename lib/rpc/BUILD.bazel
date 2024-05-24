@@ -1,0 +1,53 @@
+# Copyright 2024 The Pigweed Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+load(
+    "@pigweed//pw_protobuf_compiler:pw_proto_library.bzl",
+    "pw_proto_filegroup",
+    "pw_proto_library",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+pw_proto_filegroup(
+    name = "kudzu_proto_and_options",
+    srcs = ["kudzu.proto"],
+    options_files = ["kudzu.options"],
+)
+
+proto_library(
+    name = "kudzu_proto",
+    srcs = [":kudzu_proto_and_options"],
+    import_prefix = "kudzu",
+    strip_import_prefix = "/lib/rpc",
+    deps = [
+        "@pigweed//pw_protobuf:common_proto",
+    ],
+)
+
+pw_proto_library(
+    name = "kudzu_cc",
+    deps = [":kudzu_proto"],
+)
+
+cc_library(
+    name = "kudzu_service",
+    hdrs = ["public/kudzu/kudzu_service_pwpb.h"],
+    includes = ["public"],
+    deps = [
+        ":kudzu_cc.pwpb_rpc",
+        "@pico-sdk//src/rp2_common/hardware_adc",
+        "@pico-sdk//src/rp2_common/pico_bootrom",
+    ],
+)

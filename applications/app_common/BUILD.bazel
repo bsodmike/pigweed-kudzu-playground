@@ -1,0 +1,50 @@
+# Copyright 2024 The Pigweed Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
+load("@pigweed//pw_build:pigweed.bzl", "host_backend_alias", "pw_facade")
+
+package(default_visibility = ["//visibility:public"])
+
+pw_facade(
+    name = "app_common",
+    hdrs = ["public/app_common/common.h"],
+    backend = ":app_common_backend",
+    includes = ["public"],
+    deps = [
+        "//lib/kudzu_buttons",
+        "//lib/kudzu_imu",
+        "//lib/pw_touchscreen",
+        "@pigweed-experimental//pw_graphics/pw_display",
+        "@pigweed//pw_status",
+        "@pigweed//pw_thread:thread",
+    ],
+)
+
+constraint_setting(
+    name = "app_common_constraint_setting",
+)
+
+alias(
+    name = "app_common_backend",
+    actual = select({
+        "//applications/app_common_impl:host_backend_constraint_value": "//applications/app_common_impl:host_null",
+        "//applications/app_common_impl:rp2040_backend_constraint_value": "//applications/app_common_impl:pico_st7789_pio",
+        "//conditions:default": ":unspecified_backend",
+    }),
+)
+
+host_backend_alias(
+    name = "unspecified_backend",
+    backend = "//applications/app_common_impl:host_null",
+)

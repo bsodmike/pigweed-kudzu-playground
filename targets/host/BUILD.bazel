@@ -12,22 +12,26 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-import("//build_overrides/pigweed.gni")
+# Bazel platform definitions.
+load("@local_config_platform//:constraints.bzl", "HOST_CONSTRAINTS")
 
-import("$dir_pw_build/target_types.gni")
+platform(
+    name = "host",
+    constraint_values = [
+        # TODO(tonymd): Figure out which constrains are required here.
+    ] + HOST_CONSTRAINTS,
+)
 
-config("default_config") {
-  include_dirs = [ "public" ]
-}
-
-pw_source_set("framecounter") {
-  public_configs = [ ":default_config" ]
-  public = [ "public/libkudzu/framecounter.h" ]
-  public_deps = [ "$dir_pw_ring_buffer" ]
-  deps = [
-    "$dir_pw_chrono:system_clock",
-    "$dir_pw_log",
-    "$dir_pw_ring_buffer",
-  ]
-  sources = [ "framecounter.cc" ]
-}
+cc_library(
+    name = "boot",
+    srcs = [
+        "boot.cc",
+    ],
+    deps = [
+        "@pigweed//pw_log",
+        "@pigweed//pw_system:init",
+        "@pigweed//pw_system:rpc_server",
+        "@pigweed//pw_thread:sleep",
+        "@pigweed//targets/host:system_rpc_server",
+    ],
+)

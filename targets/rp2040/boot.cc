@@ -21,6 +21,7 @@
 #include "FreeRTOS.h"
 #include "kudzu/kudzu_service_pwpb.h"
 #include "pico/stdlib.h"
+#include "pw_assert/check.h"
 #include "pw_log/log.h"
 #include "pw_string/util.h"
 #include "pw_system/init.h"

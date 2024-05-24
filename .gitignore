@@ -2,6 +2,8 @@
 out/
 .presubmit/
 compile_commands.json
+user.bazelrc
+/bazel-*
 
 # Environment
 .environment/
