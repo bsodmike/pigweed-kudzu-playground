@@ -211,10 +211,8 @@ http_archive(
 
 git_repository(
     name = "pico-sdk",
-    # commit = "f469db237d4d7330088600e412be6bdfe8cb2223",
-    # remote = "https://pigweed.googlesource.com/third_party/github/raspberrypi/pico-sdk",
-    commit = "7a2578294366fec12c605189d67e6b57fffad9b7",
-    remote = "https://github.com/armandomontanez/pico-sdk",
+    commit = "4de7ec6bd73cd154533f35d9058279267ba77176",
+    remote = "https://pigweed.googlesource.com/third_party/github/raspberrypi/pico-sdk",
 )
 
 # TODO: Provide tinyusb as a proper Bazel module.
@@ -224,38 +222,4 @@ http_archive(
     sha256 = "ac57109bba00d26ffa33312d5f334990ec9a9a4d82bf890ed8b825b4610d1da2",
     strip_prefix = "tinyusb-86c416d4c0fb38432460b3e11b08b9de76941bf5",
     url = "https://github.com/hathach/tinyusb/archive/86c416d4c0fb38432460b3e11b08b9de76941bf5.zip",
-)
-
-# TODO(339893258): These are required because objcopy is hard-coded to the
-# toolchain tools set up by the pico-sdk.
-http_archive(
-    name = "arm_gcc_linux-x86_64",
-    build_file = "@pw_toolchain//build_external:gcc_arm_none_eabi.BUILD",
-    sha256 = "6cd1bbc1d9ae57312bcd169ae283153a9572bd6a8e4eeae2fedfbc33b115fdbb",
-    strip_prefix = "arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi",
-    url = "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz",
-)
-
-http_archive(
-    name = "arm_gcc_win-x86_64",
-    build_file = "@pw_toolchain//build_external:gcc_arm_none_eabi.BUILD",
-    sha256 = "51d933f00578aa28016c5e3c84f94403274ea7915539f8e56c13e2196437d18f",
-    strip_prefix = "arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi",
-    url = "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-eabi.zip",
-)
-
-http_archive(
-    name = "arm_gcc_mac-x86_64",
-    build_file = "@pw_toolchain//build_external:gcc_arm_none_eabi.BUILD",
-    sha256 = "075faa4f3e8eb45e59144858202351a28706f54a6ec17eedd88c9fb9412372cc",
-    strip_prefix = "arm-gnu-toolchain-13.2.Rel1-darwin-x86_64-arm-none-eabi",
-    url = "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-darwin-x86_64-arm-none-eabi.tar.xz",
-)
-
-http_archive(
-    name = "arm_gcc_mac-aarch64",
-    build_file = "@pw_toolchain//build_external:gcc_arm_none_eabi.BUILD",
-    sha256 = "39c44f8af42695b7b871df42e346c09fee670ea8dfc11f17083e296ea2b0d279",
-    strip_prefix = "arm-gnu-toolchain-13.2.Rel1-darwin-arm64-arm-none-eabi",
-    url = "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-darwin-arm64-arm-none-eabi.tar.xz",
 )
