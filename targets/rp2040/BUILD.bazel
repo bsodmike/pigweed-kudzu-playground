@@ -25,8 +25,6 @@ platform(
         "@pigweed//targets/rp2040:freertos_config_cv",
         "@pigweed//pw_build/constraints/rtos:freertos",
         "@pigweed//pw_build/constraints/chipset:rp2040",
-        "@pigweed//pw_interrupt_cortex_m:backend",
-        "@pigweed//pw_sys_io_rp2040:backend",
 
         # For toolchain selection.
         "@platforms//cpu:armv6-m",

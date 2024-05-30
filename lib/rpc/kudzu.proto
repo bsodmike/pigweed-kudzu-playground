@@ -24,7 +24,7 @@ service Kudzu {
 
 message RebootType {
   enum Enum {
-    UKNOWN = 0;
+    UNKNOWN = 0;
     BOTH_MASS_STORAGE_AND_PICOBOOT = 1;
     PICOBOOT_ONLY = 2;
     MASS_STORAGE_ONLY = 3;

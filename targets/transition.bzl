@@ -23,9 +23,11 @@ def _rp2040_transition_impl(settings, attr):
 
     return {
         "//command_line_option:platforms": "//targets/rp2040:platform",
+        "@pigweed//pw_interrupt:backend": "@pigweed//pw_interrupt_cortex_m:context",
         "@pigweed//pw_log:backend": "@pigweed//pw_log_tokenized",
         "@pigweed//pw_log:backend_impl": "@pigweed//pw_log_tokenized:impl",
         "@pigweed//pw_log_tokenized:handler_backend": "@pigweed//pw_system:log_backend",
+        "@pigweed//pw_sys_io:backend": "@pigweed//pw_sys_io_rp2040",
         "@pigweed//pw_system:extra_platform_libs": "//targets/rp2040:extra_platform_libs",
     }
 
@@ -37,7 +39,9 @@ _rp2040_transition = transition(
         "@pigweed//pw_log:backend_impl",
         "@pigweed//pw_log:backend",
         "@pigweed//pw_log_tokenized:handler_backend",
+        "@pigweed//pw_interrupt:backend",
         "@pigweed//pw_system:extra_platform_libs",
+        "@pigweed//pw_sys_io:backend",
     ],
 )
 
