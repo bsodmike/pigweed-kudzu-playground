@@ -23,6 +23,7 @@ def _rp2040_transition_impl(settings, attr):
 
     return {
         "//command_line_option:platforms": "//targets/rp2040:platform",
+        "@freertos//:freertos_config": "//targets/rp2040:freertos_config",
         "@pigweed//pw_interrupt:backend": "@pigweed//pw_interrupt_cortex_m:context",
         "@pigweed//pw_log:backend": "@pigweed//pw_log_tokenized",
         "@pigweed//pw_log:backend_impl": "@pigweed//pw_log_tokenized:impl",
@@ -36,6 +37,7 @@ _rp2040_transition = transition(
     inputs = [],
     outputs = [
         "//command_line_option:platforms",
+        "@freertos//:freertos_config",
         "@pigweed//pw_log:backend_impl",
         "@pigweed//pw_log:backend",
         "@pigweed//pw_log_tokenized:handler_backend",

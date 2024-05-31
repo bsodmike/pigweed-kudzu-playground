@@ -23,8 +23,9 @@ common --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 common --per_file_copt=external/.*@-w
 common --host_per_file_copt=external/.*@-w
 
-common --@freertos//:freertos_config=@kudzu//targets/rp2040:freertos_config
 common --host_platform=//targets/host
+
+common --custom_malloc=//targets:malloc
 
 # Required for new toolchain resolution API.
 build --incompatible_enable_cc_toolchain_resolution

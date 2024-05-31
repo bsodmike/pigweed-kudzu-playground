@@ -15,7 +15,8 @@
 load(
     "@pigweed//pw_protobuf_compiler:pw_proto_library.bzl",
     "pw_proto_filegroup",
-    "pw_proto_library",
+    "pwpb_proto_library",
+    "pwpb_rpc_proto_library",
 )
 
 package(default_visibility = ["//visibility:public"])
@@ -36,8 +37,14 @@ proto_library(
     ],
 )
 
-pw_proto_library(
-    name = "kudzu_cc",
+pwpb_proto_library(
+    name = "kudzu_pwpb",
+    deps = [":kudzu_proto"],
+)
+
+pwpb_rpc_proto_library(
+    name = "kudzu_pwpb_rpc",
+    pwpb_proto_library_deps = [":kudzu_pwpb"],
     deps = [":kudzu_proto"],
 )
 
@@ -46,7 +53,7 @@ cc_library(
     hdrs = ["public/kudzu/kudzu_service_pwpb.h"],
     includes = ["public"],
     deps = [
-        ":kudzu_cc.pwpb_rpc",
+        ":kudzu_pwpb_rpc",
         "@pico-sdk//src/rp2_common/hardware_adc",
         "@pico-sdk//src/rp2_common/pico_bootrom",
     ],
