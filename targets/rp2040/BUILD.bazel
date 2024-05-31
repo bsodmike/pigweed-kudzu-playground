@@ -24,6 +24,7 @@ platform(
         "@pico-sdk//bazel/constraint:stdio_usb",
         "@pigweed//pw_build/constraints/rtos:freertos",
         "@pigweed//pw_build/constraints/chipset:rp2040",
+        "@pigweed//pw_interrupt_cortex_m:backend",
 
         # For toolchain selection.
         "@platforms//cpu:armv6-m",

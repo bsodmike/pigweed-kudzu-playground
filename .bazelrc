@@ -32,6 +32,13 @@ build --incompatible_enable_cc_toolchain_resolution
 
 build --strip=never
 
+# Default targets to build when running:
+# bazel build --config=presubmit
+build:presubmit -- \
+  //... \
+  //applications/badge:badge \
+  //applications/badge:rp2040_badge.elf
+
 # Don't automatically create __init__.py files.
 #
 # This prevents spurious package name collisions at import time, and should be
