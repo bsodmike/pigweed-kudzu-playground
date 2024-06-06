@@ -66,8 +66,8 @@ fi
 export KUDZU_ROOT="$(_bootstrap_abspath "$(dirname "$_BOOTSTRAP_PATH")")"
 # Make pw experimental presubmit happy
 export PIGWEED_EXPERIMENTAL_ROOT="$KUDZU_ROOT"
-PW_PROJECT_ROOT="$KUDZU_ROOT"
-PW_ROOT="$KUDZU_ROOT/third_party/pigweed"
+export PW_PROJECT_ROOT="$KUDZU_ROOT"
+export PW_ROOT="$KUDZU_ROOT/third_party/pigweed"
 
 # Set your project's banner and color.
 export PW_BRANDING_BANNER="$KUDZU_ROOT/banner.txt"
@@ -78,11 +78,8 @@ KUDZU_banner() {
   echo
 }
 
-PW_BANNER_FUNC="KUDZU_banner"
+export PW_BANNER_FUNC="KUDZU_banner"
 ########## END PROJECT-SPECIFIC CODE ##########
-export PW_BANNER_FUNC
-export PW_PROJECT_ROOT
-export PW_ROOT
 
 _util_sh="$PW_ROOT/pw_env_setup/util.sh"
 
@@ -135,5 +132,17 @@ unset _bootstrap_abspath
 unset _util_sh
 
 pw_install_post_checkout_hook
+
+if [[ "$TERM" != dumb ]]; then
+  # Shell completion: bash.
+  if test -n "$BASH"; then
+    . "$PW_ROOT/pw_cli/py/pw_cli/shell_completion/pw.bash"
+    . "$PW_ROOT/pw_cli/py/pw_cli/shell_completion/pw_build.bash"
+  # Shell completion: zsh.
+  elif test -n "$ZSH_NAME"; then
+    . "$PW_ROOT/pw_cli/py/pw_cli/shell_completion/pw.zsh"
+    . "$PW_ROOT/pw_cli/py/pw_cli/shell_completion/pw_build.zsh"
+  fi
+fi
 
 pw_cleanup
