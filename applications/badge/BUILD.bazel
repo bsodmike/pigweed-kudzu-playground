@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
+load("@pigweed//targets/host_device_simulator:transition.bzl", "host_device_simulator_binary")
 load("//targets:transition.bzl", "rp2040_binary")
 
 package(default_visibility = ["//visibility:public"])
@@ -49,7 +51,43 @@ cc_binary(
     ],
 )
 
+# Create an rp2040 flashable ELF
 rp2040_binary(
     name = "rp2040_badge.elf",
     binary = ":badge",
+)
+
+# bazel run //applications/badge:rp2040_console
+native_binary(
+    name = "rp2040_console",
+    src = "//tools:console",
+    args = [
+        # TODO(343949763): Remove device path specification if possible.
+        "-d",
+        "/dev/ttyACM0",
+        "-b",
+        "115200",
+        "--token-databases",
+        "$(rootpath //applications/badge:rp2040_badge.elf)",
+    ],
+    data = [":rp2040_badge.elf"],
+)
+
+# Create a host binary using the Pigweed upstream pw_system host_device_simulator.
+# This can be executed with:
+#   bazel run //applications/badge:simulator_badge
+host_device_simulator_binary(
+    name = "simulator_badge",
+    binary = ":badge",
+)
+
+# Connect to a running badge host_device_simulator_binary with:
+#   bazel run //applications/badge:simulator_console
+native_binary(
+    name = "simulator_console",
+    src = "//tools:console",
+    args = [
+        "--socket",
+        "default",
+    ],
 )

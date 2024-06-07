@@ -18,6 +18,7 @@ load(
     "pwpb_proto_library",
     "pwpb_rpc_proto_library",
 )
+load("@rules_python//python:proto.bzl", "py_proto_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -45,6 +46,11 @@ pwpb_proto_library(
 pwpb_rpc_proto_library(
     name = "kudzu_pwpb_rpc",
     pwpb_proto_library_deps = [":kudzu_pwpb"],
+    deps = [":kudzu_proto"],
+)
+
+py_proto_library(
+    name = "kudzu_protos_py_pb2",
     deps = [":kudzu_proto"],
 )
 

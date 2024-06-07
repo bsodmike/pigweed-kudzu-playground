@@ -12,26 +12,17 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-# Bazel platform definitions.
-load("@local_config_platform//:constraints.bzl", "HOST_CONSTRAINTS")
+load("@rules_python//python:defs.bzl", "py_binary")
 
-platform(
-    name = "host",
-    constraint_values = [
-        # TODO(tonymd): Figure out which constrains are required here.
-    ] + HOST_CONSTRAINTS,
-)
+package(default_visibility = ["//visibility:public"])
 
-cc_library(
-    name = "boot",
-    srcs = [
-        "boot.cc",
-    ],
+py_binary(
+    name = "console",
+    srcs = ["kudzu_tools/console.py"],
     deps = [
-        "@pigweed//pw_log",
-        "@pigweed//pw_system:init",
-        "@pigweed//pw_system:rpc_server",
-        "@pigweed//pw_thread:sleep",
-        "@pigweed//targets/host:system_rpc_server",
+        "//lib/rpc:kudzu_protos_py_pb2",
+        "@pigweed//pw_protobuf:common_py_pb2",
+        "@pigweed//pw_rpc:echo_py_pb2",
+        "@pigweed//pw_system/py:pw_system_lib",
     ],
 )
