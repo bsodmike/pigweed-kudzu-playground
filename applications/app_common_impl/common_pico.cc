@@ -188,6 +188,8 @@ DisplayDriver s_display_driver({
 #endif
     .spi_device_8_bit = s_spi_8_bit.device,
     .spi_device_16_bit = s_spi_16_bit.device,
+    .screen_width = DISPLAY_WIDTH,
+    .screen_height = DISPLAY_HEIGHT,
 #if USE_PIO
     .pixel_pusher = &s_pixel_pusher,
 #endif
