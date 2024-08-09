@@ -117,6 +117,8 @@ void MainTask(void*) {
   Framebuffer framebuffer = display.GetFramebuffer();
   PW_ASSERT(framebuffer.is_valid());
 
+  kudzu::Buttons& kudzu_buttons = Common::GetButtons();
+
   blit::Surface screen = blit::Surface(
       (uint8_t*)framebuffer.data(),
       blit::PixelFormat::RGB565,
@@ -125,9 +127,25 @@ void MainTask(void*) {
   screen.clear();
 
   display.ReleaseFramebuffer(std::move(framebuffer));
+  int32_t text_pos_x = screen.bounds.w / 2;
+  int32_t text_pos_y = screen.bounds.h * .75;
 
   // The display loop.
   while (1) {
+    kudzu_buttons.Update();
+    if (kudzu_buttons.Held(kudzu::button::up)) {
+      text_pos_y -= 1;
+    }
+    if (kudzu_buttons.Held(kudzu::button::down)) {
+      text_pos_y += 1;
+    }
+    if (kudzu_buttons.Held(kudzu::button::left)) {
+      text_pos_x -= 1;
+    }
+    if (kudzu_buttons.Held(kudzu::button::right)) {
+      text_pos_x += 1;
+    }
+
     frame_counter.StartFrame();
 
     framebuffer = display.GetFramebuffer();
@@ -142,10 +160,32 @@ void MainTask(void*) {
     // Draw 32blit animation
     std::string text = "Pigweed + 32blit";
     auto text_size = screen.measure_text(text, blit::minimal_font, true);
-    blit::Rect text_rect(
-        blit::Point((screen.bounds.w / 2) - (text_size.w / 2),
-                    (screen.bounds.h * .75) - (text_size.h / 2)),
-        text_size);
+
+    // Ensure that the text stays on-screen by wrapping its position around.
+    int32_t width = screen.bounds.w;
+    int32_t height = screen.bounds.h;
+
+    int32_t min_x = 0 - (text_size.w / 2);
+    int32_t max_x = width + (text_size.w / 2);
+    int32_t min_y = 0 - (text_size.h / 2);
+    int32_t max_y = height + (text_size.h / 2);
+
+    if (text_pos_x < min_x) {
+      text_pos_x = max_x;
+    }
+    if (text_pos_x > max_x) {
+      text_pos_x = min_x;
+    }
+    if (text_pos_y < min_y) {
+      text_pos_y = max_y;
+    }
+    if (text_pos_y > max_y) {
+      text_pos_y = min_y;
+    }
+
+    blit::Rect text_rect(blit::Point(text_pos_x - (text_size.w / 2),
+                                     text_pos_y - (text_size.h / 2)),
+                         text_size);
 
     rain(screen, frame_counter.LastFrameDuration(), text_rect);
     screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
