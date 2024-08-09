@@ -74,6 +74,8 @@ void MainTask(void*) {
   display.ReleaseFramebuffer(std::move(framebuffer));
 
   snake::Game game(display_width, display_height);
+
+  kudzu::Buttons& kudzu_buttons = Common::GetButtons();
   PollingTouchButtonsThread touch_buttons_thread{
       Common::GetTouchscreen(), game, display_width, display_height};
   pw::thread::DetachedThread(Common::TouchscreenThreadOptions(),
@@ -85,6 +87,20 @@ void MainTask(void*) {
   kudzu::FrameCounter frame_counter = kudzu::FrameCounter();
   while (true) {
     frame_counter.StartFrame();
+
+    kudzu_buttons.Update();
+    if (kudzu_buttons.Pressed(kudzu::button::up)) {
+      game.OnButtonUp(true);
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::down)) {
+      game.OnButtonDown(true);
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::left)) {
+      game.OnButtonLeft(true);
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::right)) {
+      game.OnButtonRight(true);
+    }
 
     // Get frame buffer.
     framebuffer = display.GetFramebuffer();
