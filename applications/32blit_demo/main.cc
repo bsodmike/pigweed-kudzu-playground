@@ -97,8 +97,8 @@ void rain(blit::Surface screen,
 
       int a = p.age / 2;
       int r = 100 - (a / 2);
-      int g = 255 - (a / 2);
-      int b = 255;  // -(a * 4);
+      int g = 255 - (a * 4);
+      int b = 255 - (a / 2);
 
       if (p.vel.length() > 20) {
         screen.pen = blit::Pen(b, g, r, 100);
@@ -132,8 +132,25 @@ void MainTask(void*) {
   screen.clear();
 
   display.ReleaseFramebuffer(std::move(framebuffer));
-  int32_t text_pos_x = screen.bounds.w / 2;
-  int32_t text_pos_y = screen.bounds.h * .75;
+  const int32_t init_text_pos_x = screen.bounds.w / 2;
+  int32_t text_pos_x = init_text_pos_x;
+  const int32_t init_text_pos_y = screen.bounds.h * 0.75;
+  int32_t text_pos_y = init_text_pos_y;
+
+  // NOTE: colors are in BGR order
+  static constexpr const std::array text_colors{
+      blit::Pen(0xFF, 0xFF, 0xFF),
+      blit::Pen(0xB8, 0xA9, 0xF5),
+      blit::Pen(0xFA, 0xCE, 0x5B),
+  };
+  int text_color_index = 0;
+
+  static const std::array fonts{
+      blit::minimal_font,
+      blit::outline_font,
+      blit::fat_font,
+  };
+  int font_index = 0;
 
   // The display loop.
   while (1) {
@@ -150,6 +167,16 @@ void MainTask(void*) {
     if (kudzu_buttons.Held(kudzu::button::right)) {
       text_pos_x += 1;
     }
+    if (kudzu_buttons.Pressed(kudzu::button::a)) {
+      text_color_index = (text_color_index + 1) % text_colors.size();
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::b)) {
+      font_index = (font_index + 1) % fonts.size();
+    }
+    if (kudzu_buttons.Pressed(kudzu::button::start)) {
+      text_pos_x = init_text_pos_x;
+      text_pos_y = init_text_pos_y;
+    }
 
     frame_counter.StartFrame();
 
@@ -164,7 +191,7 @@ void MainTask(void*) {
 
     // Draw 32blit animation
     std::string text = "Pigweed + 32blit";
-    auto text_size = screen.measure_text(text, blit::minimal_font, true);
+    auto text_size = screen.measure_text(text, fonts[font_index], true);
 
     // Ensure that the text stays on-screen by wrapping its position around.
     int32_t width = screen.bounds.w;
@@ -193,9 +220,9 @@ void MainTask(void*) {
                          text_size);
 
     rain(screen, frame_counter.LastFrameDuration(), text_rect);
-    screen.pen = blit::Pen(0xFF, 0xFF, 0xFF);
+    screen.pen = text_colors[text_color_index];
     screen.text(
-        text, blit::minimal_font, text_rect, true, blit::TextAlign::top_left);
+        text, fonts[font_index], text_rect, true, blit::TextAlign::top_left);
 
     // Update timers
     frame_counter.EndDraw();
