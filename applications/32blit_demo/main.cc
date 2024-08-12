@@ -48,8 +48,7 @@ struct test_particle {
 };
 
 void rain_generate(test_particle& p, blit::Surface screen) {
-  p.pos = blit::Vec2(GetRandomFloat(screen.bounds.w),
-                     GetRandomFloat(10) - (screen.bounds.h + 10));
+  p.pos = blit::Vec2(GetRandomFloat(screen.bounds.w), -10 + GetRandomFloat(10));
   p.vel = blit::Vec2(0, 150);
   p.age = 0;
   p.generated = true;
@@ -57,7 +56,7 @@ void rain_generate(test_particle& p, blit::Surface screen) {
 
 void rain(blit::Surface screen,
           pw::chrono::SystemClock::duration elapsed_time,
-          blit::Rect floor_position) {
+          blit::Rect text_position) {
   static test_particle s[300];
   static int generate_index = 0;
 
@@ -72,15 +71,21 @@ void rain(blit::Surface screen,
   blit::Vec2 gvec = blit::Vec2(0, 9.8 * 5);
   blit::Vec2 gravity = gvec * elapsed_seconds.count();
 
+  // Add a little padding to the text box.
+  text_position.y -= 2;
+  text_position.h += 2;
+
   for (auto& p : s) {
     if (p.generated) {
       p.vel += gravity;
       p.pos += p.vel * elapsed_seconds.count();
 
-      int floor = -3;
-      if (p.pos.x > floor_position.x &&
-          p.pos.x < (floor_position.x + floor_position.w))
-        floor = -3 - (screen.bounds.h - floor_position.y);
+      int floor = screen.bounds.h - 3;
+
+      // Rain lands on top of the text.
+      if (text_position.contains(p.pos)) {
+        floor = text_position.y;
+      }
 
       if (p.pos.y >= floor) {
         p.pos.y = floor;
@@ -97,12 +102,12 @@ void rain(blit::Surface screen,
 
       if (p.vel.length() > 20) {
         screen.pen = blit::Pen(b, g, r, 100);
-        screen.pixel(p.pos + blit::Point(0, screen.bounds.h - 1));
+        screen.pixel(p.pos + blit::Point(0, -1));
         screen.pen = blit::Pen(b, g, r, 160);
-        screen.pixel(p.pos + blit::Point(0, screen.bounds.h + 1));
+        screen.pixel(p.pos + blit::Point(0, 1));
       }
       screen.pen = blit::Pen(b, g, r, 180);
-      screen.pixel(p.pos + blit::Point(0, screen.bounds.h + 2));
+      screen.pixel(p.pos);
     }
   }
 };
