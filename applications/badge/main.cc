@@ -22,6 +22,7 @@
 #include "graphics/surface.hpp"
 #include "heart_8x8.h"
 #include "hello_my_name_is65x42.h"
+#include "kudzu_blinky/blinky.h"
 #include "kudzu_buttons/buttons.h"
 #include "kudzu_isometric_text_sprite.h"
 #include "libkudzu/framecounter.h"
@@ -47,6 +48,7 @@
 #include "pw_touchscreen/touchscreen.h"
 
 using kudzu::Buttons;
+using kudzu::Blinky;
 using pw::color::color_rgb565_t;
 using pw::color::kColorsPico8Rgb565;
 using pw::display::Display;
