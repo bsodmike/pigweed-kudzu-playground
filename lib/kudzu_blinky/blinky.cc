@@ -22,7 +22,7 @@
 
 #include "pw_log/log.h"
 
-namespace kudzu {
+namespace kudzu::blinky {
 
 pw::Status Blinky::Update() { 
     return pw::Status(); 

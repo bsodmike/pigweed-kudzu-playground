@@ -80,6 +80,14 @@ int main() {
   PW_LOG_INFO("pw_system main");
 
   pw::system::Init();
+
+  // FIXME hook blinky service here?
+  static kudzu::blinky::BlinkyService blinky_service;
+  // blinky_service.Init(pw::System().dispatcher(),
+  //                     pw::System().allocator(),
+  //                     monochrome_led,
+  //                     polychrome_led);
+
   pw::system::GetRpcServer().RegisterService(kudzu_service);
   vTaskStartScheduler();
   PW_UNREACHABLE;

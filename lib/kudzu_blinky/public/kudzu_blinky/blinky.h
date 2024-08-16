@@ -21,8 +21,7 @@
 #include "pw_result/result.h"
 #include "pw_status/status.h"
 
-namespace kudzu {
-
+namespace kudzu::blinky {
 
 class Blinky {
  public:
@@ -32,4 +31,4 @@ class Blinky {
   pw::Status Update();
 };
 
-}  // namespace kudzu
+}  // namespace kudzu::blinky
