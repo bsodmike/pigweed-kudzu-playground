@@ -13,6 +13,7 @@
 // the License.
 #pragma once
 
+#include "kudzu_blinky/blinky.h"
 #include "kudzu_buttons/buttons.h"
 #include "kudzu_imu/imu.h"
 #include "pw_display/display.h"

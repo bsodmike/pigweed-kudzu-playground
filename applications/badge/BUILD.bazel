@@ -34,6 +34,7 @@ cc_binary(
     deps = [
         "//applications/app_common",
         "//lib/framecounter",
+        "//lib/kudzu_blinky",
         "//lib/kudzu_imu",
         "//lib/random",
         "@pigweed-experimental//pw_graphics/pw_color",

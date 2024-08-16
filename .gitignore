@@ -17,6 +17,7 @@ build_overrides/pigweed_environment.gni
 .vscode/extensions.json
 .vscode/pw_user_*.json
 .vscode/*.bak.json
+.vscode/*
 .idea/
 .project
 .cproject

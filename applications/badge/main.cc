@@ -22,6 +22,7 @@
 #include "graphics/surface.hpp"
 #include "heart_8x8.h"
 #include "hello_my_name_is65x42.h"
+#include "kudzu_blinky/blinky.h"
 #include "kudzu_buttons/buttons.h"
 #include "kudzu_isometric_text_sprite.h"
 #include "libkudzu/framecounter.h"
@@ -47,6 +48,7 @@
 #include "pw_touchscreen/touchscreen.h"
 
 using kudzu::Buttons;
+using kudzu::blinky::Blinky;
 using pw::color::color_rgb565_t;
 using pw::color::kColorsPico8Rgb565;
 using pw::display::Display;
@@ -254,7 +256,7 @@ void MainTask(void*) {
   pw::touchscreen::TouchEvent last_touch_event;
 
   Buttons& kudzu_buttons = Common::GetButtons();
-
+ 
   float x_scale_offset = 0.0;
   float y_scale_offset = 0.0;
   const float x_scale_increment = 0.7;
